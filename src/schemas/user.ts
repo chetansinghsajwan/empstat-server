@@ -3,31 +3,38 @@ import * as zodExpress from 'zod-express-middleware'
 
 const passwordRegex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
 
-export const createUser = {
-    body: zod.object({
-        id: zod.string().min(1, 'id cannot be empty').trim().toLowerCase(),
+const id = zod.string().min(1, 'id cannot be empty').trim().toLowerCase()
 
-        email: zod.string().email('invalid email format').trim().toLowerCase(),
+const body = {
 
-        password: zod.string().regex(
-            passwordRegex,
-            'pasword must \
-                be greater than 7 characters \
-                and shorter than 17 characters \
-                and contain \
-                one lower case letter, \
-                one upper case letter, \
-                one number \
-                and one special character'
-        ),
+    id: id,
 
-        name: zod.string().min(1, 'name cannot be empty').trim(),
-    }),
+    email: zod.string().email('invalid email format').trim().toLowerCase(),
+
+    password: zod.string().regex(
+        passwordRegex,
+        'pasword must \
+            be greater than 7 characters \
+            and shorter than 17 characters \
+            and contain \
+            one lower case letter, \
+            one upper case letter, \
+            one number \
+            and one special character'
+    ),
+
+    name: zod.string().min(1, 'name cannot be empty').trim(),
 }
 
-export const deleteUser = {}
+const createUser = {
 
-export const loginUser = {
+    body: zod.object(body),
+}
+
+const deleteUser = {}
+
+const loginUser = {
+
     body: zod.object({
         id: zod.string().min(1, 'id cannot be empty'),
 
@@ -35,16 +42,20 @@ export const loginUser = {
     }),
 }
 
-export const getUser = {}
-export const getUsers = {}
+const getUser = {}
 
-export const validateCreateUserRequest = zodExpress.validateRequest(createUser)
-export const validateDeleteUserRequest = zodExpress.validateRequest(deleteUser)
-export const validateLoginUserRequest = zodExpress.validateRequest(loginUser)
-export const validateGetUserRequest = zodExpress.validateRequest(getUser)
-export const validateGetUsersRequest = zodExpress.validateRequest(getUsers)
+const getUsers = {}
+
+const validateCreateUserRequest = zodExpress.validateRequest(createUser)
+const validateDeleteUserRequest = zodExpress.validateRequest(deleteUser)
+const validateLoginUserRequest = zodExpress.validateRequest(loginUser)
+const validateGetUserRequest = zodExpress.validateRequest(getUser)
+const validateGetUsersRequest = zodExpress.validateRequest(getUsers)
 
 export default {
+
+    id,
+
     createUser,
     deleteUser,
     getUser,

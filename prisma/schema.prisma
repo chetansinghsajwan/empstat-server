@@ -23,7 +23,7 @@ model User {
   trainingId String?
   Training   Training? @relation(fields: [trainingId], references: [id])
 
-  TrainingResult TrainingResult[]
+  Assessment Assessment[]
   Secrets        Secrets[]
 
   createdAt DateTime @default(now())
@@ -63,23 +63,23 @@ model Training {
   mode            TrainingMode
   subjectId       String
   subject         Subject          @relation(fields: [subjectId], references: [id])
-  internetAllowed Boolean
   users           User[]
   startedAt       DateTime
   endedAt         DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  TrainingResult  TrainingResult[]
+  Assessment  Assessment[]
 }
 
-model TrainingResult {
+model Assessment {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
   trainingId String
   training   Training @relation(fields: [trainingId], references: [id])
 
-  totalMarks Int
+  marks Int
+  internetAllowed Boolean
 
   @@id([userId, trainingId])
 }

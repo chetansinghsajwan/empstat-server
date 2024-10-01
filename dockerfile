@@ -14,7 +14,10 @@ RUN npm install -g
 FROM bare AS devenv
 
 RUN apt-get install -y \
-    git
+    git \
+    vim
+
+RUN git config --global core.editor vim
 
 FROM bare AS run
 

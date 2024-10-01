@@ -3,6 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import logging, { logger } from './utils/logging'
+import errorHandler from './middlewares/errorHandler'
 import router from './routes'
 import assert from 'assert'
 
@@ -13,6 +14,7 @@ app.use(cookieParser())
 app.use(logging.requestLogger)
 app.use(router)
 app.use(logging.errorLogger)
+app.use(errorHandler)
 
 const port = process.env.EMPSTAT_SERVER_PORT
 assert(port, 'port not defined')

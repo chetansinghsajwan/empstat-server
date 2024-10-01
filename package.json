@@ -5,8 +5,8 @@
   "type": "module",
   "main": "src/index",
   "scripts": {
-    "start": "tsx index.ts",
-    "dev": "tsx watch index.ts",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.4",
+    "dotenv": "^16.4.5",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2"
   }

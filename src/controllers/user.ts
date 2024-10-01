@@ -5,8 +5,9 @@ import { logger } from '../utils/logging'
 import db from '../modals'
 import assert from 'assert'
 import authController from './auth'
+import { env } from 'process'
 
-const passwordHashSaltRounds = parseInt(process.env.PASSWORD_HASH_SALT_ROUNDS || '10')
+const passwordHashSaltRounds = parseInt(env.PASSWORD_HASH_SALT_ROUNDS || '10')
 
 export async function createUser(req: Request, res: Response) {
     logger.info('create user request recieved')

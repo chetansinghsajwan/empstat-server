@@ -6,6 +6,7 @@ import logging, { logger } from './utils/logging'
 import errorHandler from './middlewares/errorHandler'
 import router from './routes'
 import assert from 'assert'
+import { env } from 'process'
 
 const app = express()
 
@@ -16,7 +17,7 @@ app.use(router)
 app.use(logging.errorLogger)
 app.use(errorHandler)
 
-const port = process.env.EMPSTAT_SERVER_PORT
+const port = env.EMPSTAT_SERVER_PORT
 assert(port, 'port not defined')
 
 app.listen(port, function () {

@@ -6,15 +6,16 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '../utils/logging'
 
-const accessTokenSecret: string = env.ACCESS_TOKEN_SECRET || ''
-const refreshTokenSecret: string = env.REFRESH_TOKEN_SECRET || ''
-const accessTokenExpireTime: string = env.ACCESS_TOKEN_EXPIRE_TIME || ''
+const accessTokenSecret: string = env.EMPSTAT_ACCESS_TOKEN_SECRET || ''
+const refreshTokenSecret: string = env.EMPSTAT_REFRESH_TOKEN_SECRET || ''
+const accessTokenExpireTime: string = env.EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME || ''
 
 assert(accessTokenSecret, 'ACCESS_TOKEN_SECRET env variable not set')
 assert(refreshTokenSecret, 'REFRESH_TOKEN_SECRET env variable not set')
 assert(accessTokenExpireTime, 'ACCESS_TOKEN_EXPIRE_TIME env variable not set')
 
 export function createTokens(req: Request, res: Response, userId: string) {
+
     const user = { id: userId }
     const accessToken = jwt.sign(user, accessTokenSecret, {
         expiresIn: accessTokenExpireTime,
@@ -30,9 +31,6 @@ export function createTokens(req: Request, res: Response, userId: string) {
 }
 
 export function validateAccessToken(req: Request, res: Response, next: NextFunction) {
-    res.locals.user = 'csingh'
-    next()
-    return
 
     try {
         logger.info('validating access token')
@@ -52,9 +50,6 @@ export function validateAccessToken(req: Request, res: Response, next: NextFunct
 }
 
 export function validateRefreshToken(req: Request, res: Response, next: NextFunction) {
-    res.locals.user = 'csingh'
-    next()
-    return
 
     try {
         logger.info('validating refresh token')
@@ -74,6 +69,7 @@ export function validateRefreshToken(req: Request, res: Response, next: NextFunc
 }
 
 export function refreshAccessToken(req: Request, res: Response) {
+
     logger.info('refresh access token request recieved')
 
     const userId = res.locals.user

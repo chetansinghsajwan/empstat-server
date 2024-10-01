@@ -13,16 +13,18 @@ enum Role {
 }
 
 model User {
-  id       String @id
-  email    String @unique
-  name     String
-  role     Role
+  id          String  @id
+  email       String  @unique
+  first_name  String
+  middle_name String?
+  last_name   String?
+  role        Role
 
   trainingId String?
   Training   Training? @relation(fields: [trainingId], references: [id])
 
-  Metrics Metrics[]
-  Secrets Secrets[]
+  TrainingResult TrainingResult[]
+  Secrets        Secrets[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,34 +38,48 @@ model Secrets {
 }
 
 model Subject {
-  id   String @id
-  name String
+  id        String @id
+  name      String
+  minMarks  Int
+  maxMarks  Int
+  totalTime Int
 
   trainingId String?
-  Training   Training? @relation(fields: [trainingId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Training  Training[]
+}
+
+enum TrainingMode {
+  online
+  offline
+  onsite
 }
 
 model Training {
-  id        String    @id
-  name      String
-  subjects  Subject[]
-  users     User[]
-  startedAt DateTime
-  endedAt   DateTime
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Metrics   Metrics[]
+  id              String           @id
+  name            String
+  mode            TrainingMode
+  subjectId       String
+  subject         Subject          @relation(fields: [subjectId], references: [id])
+  internetAllowed Boolean
+  users           User[]
+  startedAt       DateTime
+  endedAt         DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  TrainingResult  TrainingResult[]
 }
 
-model Metrics {
+model TrainingResult {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
   trainingId String
   training   Training @relation(fields: [trainingId], references: [id])
+
+  totalMarks Int
 
   @@id([userId, trainingId])
 }

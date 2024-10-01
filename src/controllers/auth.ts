@@ -10,9 +10,9 @@ const accessTokenSecret: string = env.EMPSTAT_ACCESS_TOKEN_SECRET || ''
 const refreshTokenSecret: string = env.EMPSTAT_REFRESH_TOKEN_SECRET || ''
 const accessTokenExpireTime: string = env.EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME || ''
 
-assert(accessTokenSecret, 'ACCESS_TOKEN_SECRET env variable not set')
-assert(refreshTokenSecret, 'REFRESH_TOKEN_SECRET env variable not set')
-assert(accessTokenExpireTime, 'ACCESS_TOKEN_EXPIRE_TIME env variable not set')
+assert(accessTokenSecret, 'EMPSTAT_ACCESS_TOKEN_SECRET env variable not set')
+assert(refreshTokenSecret, 'EMPSTAT_REFRESH_TOKEN_SECRET env variable not set')
+assert(accessTokenExpireTime, 'EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME env variable not set')
 
 export function createTokens(req: Request, res: Response, userId: string) {
 

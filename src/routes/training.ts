@@ -5,34 +5,39 @@ import schema from '../schemas/training'
 
 const router = Router()
 
-router.post('',
+router.post(
+    '',
     authController.validateAccessToken,
     schema.validateCreateTrainingRequest,
-    controller.createTraining
+    controller.createTraining,
 )
 
-router.delete('/:id',
+router.delete(
+    '/:id',
     authController.validateAccessToken,
     schema.validateDeleteTrainingRequest,
-    controller.deleteTraining
+    controller.deleteTraining,
 )
 
-router.put('/:id',
+router.put(
+    '/:id',
     authController.validateAccessToken,
     schema.validateUpdateTrainingRequest,
-    controller.updateTraining
+    controller.updateTraining,
 )
 
-router.get('/:id',
+router.get(
+    '/:id',
     authController.validateAccessToken,
     schema.validateGetTrainingRequest,
-    controller.getTraining
+    controller.getTraining,
 )
 
-router.get('/all',
+router.get(
+    '/all',
     authController.validateAccessToken,
     schema.validateGetTrainingsRequest,
-    controller.getTrainings
+    controller.getTrainings,
 )
 
 export default router

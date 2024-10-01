@@ -11,7 +11,7 @@ router.delete(
     '',
     authController.validateAccessToken,
     schemas.validateDeleteUserRequest,
-    controller.deleteUser
+    controller.deleteUser,
 )
 
 router.post('/login', schemas.validateLoginUserRequest, controller.loginUser)
@@ -20,14 +20,14 @@ router.get(
     '',
     authController.validateAccessToken,
     schemas.validateGetUsersRequest,
-    controller.getUsers
+    controller.getUsers,
 )
 
 router.get(
     '',
     authController.validateAccessToken,
     schemas.validateGetUserRequest,
-    controller.getUser
+    controller.getUser,
 )
 
 export default router

@@ -1,12 +1,13 @@
 import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
 
-const passwordRegex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
+const passwordRegex = new RegExp(
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+)
 
 const id = zod.string().min(1, 'id cannot be empty').trim().toLowerCase()
 
 const body = {
-
     id: id,
 
     email: zod.string().email('invalid email format').trim().toLowerCase(),
@@ -20,21 +21,19 @@ const body = {
             one lower case letter, \
             one upper case letter, \
             one number \
-            and one special character'
+            and one special character',
     ),
 
     name: zod.string().min(1, 'name cannot be empty').trim(),
 }
 
 const createUser = {
-
     body: zod.object(body),
 }
 
 const deleteUser = {}
 
 const loginUser = {
-
     body: zod.object({
         id: zod.string().min(1, 'id cannot be empty'),
 
@@ -53,7 +52,6 @@ const validateGetUserRequest = zodExpress.validateRequest(getUser)
 const validateGetUsersRequest = zodExpress.validateRequest(getUsers)
 
 export default {
-
     id,
 
     createUser,

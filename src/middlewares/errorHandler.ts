@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
-export default function Handler(err: Error, req: Request, res: Response, next: NextFunction) {
+export default function Handler(
+    err: Error,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     console.error('error: ' + err)
     console.trace()
 

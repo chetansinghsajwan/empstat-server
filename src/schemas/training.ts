@@ -2,16 +2,11 @@ import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
 import subject from './subject.js'
 
-const mode = zod.enum([
-    "online",
-    "offline",
-    "onsite",
-])
+const mode = zod.enum(['online', 'offline', 'onsite'])
 
 const id = zod.string().min(1, 'id cannot be empty').trim().toLowerCase()
 
 const body = {
-
     // training id
     id: id,
 
@@ -25,44 +20,37 @@ const body = {
     subject: subject.body.id,
 
     // time when training was started
-    startedAt: zod.date().min(new Date(), "time should be greater than now"),
+    startedAt: zod.date().min(new Date(), 'time should be greater than now'),
 
     // time when training was ended
-    endedAt: zod.date().min(new Date(), "time should be greater than now"),
+    endedAt: zod.date().min(new Date(), 'time should be greater than now'),
 }
 
 const createTraining = {
-
     body: zod.object(body),
 }
 
 const deleteTraining = {
-
     params: zod.object({
-
         // training id
-        id: body.id
-    })
+        id: body.id,
+    }),
 }
 
 const updateTraining = {
-
     params: zod.object({
-
         // training id
-        id: body.id
+        id: body.id,
     }),
 
-    body: zod.object(body)
+    body: zod.object(body),
 }
 
 const getTraining = {
-
     params: zod.object({
-
         // training id
-        id: body.id
-    })
+        id: body.id,
+    }),
 }
 
 const getTrainings = {}
@@ -74,7 +62,6 @@ const validateGetTrainingRequest = zodExpress.validateRequest(getTraining)
 const validateGetTrainingsRequest = zodExpress.validateRequest(getTrainings)
 
 export default {
-
     id,
 
     createTraining,

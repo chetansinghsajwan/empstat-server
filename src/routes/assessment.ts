@@ -5,34 +5,39 @@ import schema from '../schemas/assessment'
 
 const router = Router()
 
-router.post('',
+router.post(
+    '',
     authController.validateAccessToken,
     schema.validateCreateAssessmentRequest,
-    controller.createAssessment
+    controller.createAssessment,
 )
 
-router.delete('/:id',
+router.delete(
+    '/:id',
     authController.validateAccessToken,
     schema.validateDeleteAssessmentRequest,
-    controller.deleteAssessment
+    controller.deleteAssessment,
 )
 
-router.put('/:id',
+router.put(
+    '/:id',
     authController.validateAccessToken,
     schema.validateUpdateAssessmentRequest,
-    controller.updateAssessment
+    controller.updateAssessment,
 )
 
-router.get('/:id',
+router.get(
+    '/:id',
     authController.validateAccessToken,
     schema.validateGetAssessmentRequest,
-    controller.getAssessment
+    controller.getAssessment,
 )
 
-router.get('/all',
+router.get(
+    '/all',
     authController.validateAccessToken,
     schema.validateGetAssessmentsRequest,
-    controller.getAssessments
+    controller.getAssessments,
 )
 
 export default router

@@ -2,7 +2,6 @@ import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
 
 const body = {
-
     // subject id
     id: zod.string().min(1, 'id cannot be empty').trim().toLowerCase(),
 
@@ -22,49 +21,45 @@ const body = {
 }
 
 export const createSubject = {
-
     body: zod.object(body),
 }
 
 export const deleteSubject = {
-
     params: zod.object({
-
         // subject id
-        id: body.id
-    })
+        id: body.id,
+    }),
 }
 
 export const updateSubject = {
-
     params: zod.object({
-
         // subject id
-        id: body.id
+        id: body.id,
     }),
 
-    body: zod.object(body)
+    body: zod.object(body),
 }
 
 export const getSubject = {
-
     params: zod.object({
-
         // subject id
-        id: body.id
-    })
+        id: body.id,
+    }),
 }
 
 export const getSubjects = {}
 
-export const validateCreateSubjectRequest = zodExpress.validateRequest(createSubject)
-export const validateDeleteSubjectRequest = zodExpress.validateRequest(deleteSubject)
-export const validateUpdateSubjectRequest = zodExpress.validateRequest(updateSubject)
+export const validateCreateSubjectRequest =
+    zodExpress.validateRequest(createSubject)
+export const validateDeleteSubjectRequest =
+    zodExpress.validateRequest(deleteSubject)
+export const validateUpdateSubjectRequest =
+    zodExpress.validateRequest(updateSubject)
 export const validateGetSubjectRequest = zodExpress.validateRequest(getSubject)
-export const validateGetSubjectsRequest = zodExpress.validateRequest(getSubjects)
+export const validateGetSubjectsRequest =
+    zodExpress.validateRequest(getSubjects)
 
 export default {
-
     body,
 
     createSubject,

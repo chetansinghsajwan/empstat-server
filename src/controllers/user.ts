@@ -17,14 +17,19 @@ export async function createUser(req: Request, res: Response) {
     })
 
     if (existingUser !== null) {
-        logger.info('create user request rejected, user with this id address already exists')
+        logger.info(
+            'create user request rejected, user with this id address already exists',
+        )
 
         return res.status(StatusCodes.CONFLICT).send({
             error: 'create user request rejected, user with this id address already exists',
         })
     }
 
-    const hashPassword = await bcrypt.hash(req.body.password, passwordHashSaltRounds)
+    const hashPassword = await bcrypt.hash(
+        req.body.password,
+        passwordHashSaltRounds,
+    )
     req.body.password = hashPassword
 
     const user = await db.user.create({ data: req.body })
@@ -72,7 +77,9 @@ export async function loginUser(req: Request, res: Response) {
     if (!passwordMatched) {
         logger.info('login user request rejected, password does not match')
 
-        return res.status(StatusCodes.UNAUTHORIZED).send('password does not match')
+        return res
+            .status(StatusCodes.UNAUTHORIZED)
+            .send('password does not match')
     }
 
     logger.info('login user request completed')

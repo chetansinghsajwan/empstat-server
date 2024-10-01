@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Request, Response } from 'express'
 
 export async function createSubject(req: Request, res: Response) {}
 export async function deleteSubject(req: Request, res: Response) {}

@@ -5,34 +5,39 @@ import schema from '../schemas/subject'
 
 const router = Router()
 
-router.post('',
+router.post(
+    '',
     authController.validateAccessToken,
     schema.validateCreateSubjectRequest,
-    controller.createSubject
+    controller.createSubject,
 )
 
-router.delete('/:id',
+router.delete(
+    '/:id',
     authController.validateAccessToken,
     schema.validateDeleteSubjectRequest,
-    controller.deleteSubject
+    controller.deleteSubject,
 )
 
-router.put('/:id',
+router.put(
+    '/:id',
     authController.validateAccessToken,
     schema.validateUpdateSubjectRequest,
-    controller.updateSubject
+    controller.updateSubject,
 )
 
-router.get('/:id',
+router.get(
+    '/:id',
     authController.validateAccessToken,
     schema.validateGetSubjectRequest,
-    controller.getSubject
+    controller.getSubject,
 )
 
-router.get('/all',
+router.get(
+    '/all',
     authController.validateAccessToken,
     schema.validateGetSubjectsRequest,
-    controller.getSubjects
+    controller.getSubjects,
 )
 
 export default router

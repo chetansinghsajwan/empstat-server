@@ -12,10 +12,12 @@ const accessTokenExpireTime: string = env.EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME || ''
 
 assert(accessTokenSecret, 'EMPSTAT_ACCESS_TOKEN_SECRET env variable not set')
 assert(refreshTokenSecret, 'EMPSTAT_REFRESH_TOKEN_SECRET env variable not set')
-assert(accessTokenExpireTime, 'EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME env variable not set')
+assert(
+    accessTokenExpireTime,
+    'EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME env variable not set',
+)
 
 export function createTokens(req: Request, res: Response, userId: string) {
-
     const user = { id: userId }
     const accessToken = jwt.sign(user, accessTokenSecret, {
         expiresIn: accessTokenExpireTime,
@@ -30,8 +32,11 @@ export function createTokens(req: Request, res: Response, userId: string) {
         .send()
 }
 
-export function validateAccessToken(req: Request, res: Response, next: NextFunction) {
-
+export function validateAccessToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     try {
         logger.info('validating access token')
 
@@ -43,14 +48,20 @@ export function validateAccessToken(req: Request, res: Response, next: NextFunct
         res.locals.user = (user as any).id
         next()
     } catch (error) {
-        logger.error('validating access token failed, invalid token, error: ', error)
+        logger.error(
+            'validating access token failed, invalid token, error: ',
+            error,
+        )
 
         return res.status(StatusCodes.UNAUTHORIZED).send('invalid token')
     }
 }
 
-export function validateRefreshToken(req: Request, res: Response, next: NextFunction) {
-
+export function validateRefreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     try {
         logger.info('validating refresh token')
 
@@ -69,7 +80,6 @@ export function validateRefreshToken(req: Request, res: Response, next: NextFunc
 }
 
 export function refreshAccessToken(req: Request, res: Response) {
-
     logger.info('refresh access token request recieved')
 
     const userId = res.locals.user

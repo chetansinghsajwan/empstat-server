@@ -1,6 +1,6 @@
 import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
-import subject from './subject.js'
+import subject from './subject'
 
 const mode = zod.enum(['online', 'offline', 'onsite'])
 

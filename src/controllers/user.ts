@@ -73,7 +73,17 @@ export async function loginUser(req: Request, res: Response) {
         return res.status(StatusCodes.NOT_FOUND).send('user not found')
     }
 
-    const passwordMatched = await bcrypt.compare(password, user.password)
+    const secret = await db.secrets.findUnique({
+        where: { userId: userId }
+    })
+
+    if (!secret) {
+        logger.info('login user request rejected, password not found')
+
+        return res.status(StatusCodes.NOT_FOUND).send('password not found')
+    }
+
+    const passwordMatched = await bcrypt.compare(password, secret.password)
     if (!passwordMatched) {
         logger.info('login user request rejected, password does not match')
 

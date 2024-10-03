@@ -74,7 +74,7 @@ export async function loginUser(req: Request, res: Response) {
     }
 
     const secret = await db.secrets.findUnique({
-        where: { userId: userId }
+        where: { userId: userId },
     })
 
     if (!secret) {

@@ -1,8 +1,0 @@
-{
-    "name": "empstat-server",
-    "build": {
-        "context": ".",
-        "dockerfile": "dockerfile",
-        "target": "devenv"
-    }
-}

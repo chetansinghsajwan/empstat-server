@@ -1,4 +1,4 @@
-FROM ubuntu:24.10 AS bare
+FROM ubuntu:24.10
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -7,21 +7,17 @@ RUN apt-get install -y \
     nodejs \
     npm
 
-WORKDIR /root/src
-COPY package.json .
-RUN npm install -g
-
-FROM bare AS devenv
-
-RUN apt-get install -y \
-    git \
-    vim
-
-RUN git config --global core.editor vim
-
-FROM bare AS run
+ENV EMPSTAT_SERVER_PORT=5000
+ENV EMPSTAT_LOG_LEVEL=info
+ENV EMPSTAT_NODE_ENV=debug
+ENV EMPSTAT_DATABASE_URL="postgresql://developer:postpass@localhost:5432/empstat_dev?schema=public"
+ENV EMPSTAT_ACCESS_TOKEN_SECRET=02881a75691bca9fd2af5f475ae33a30673e48a475768ffaddf7b1b92898e85b3661c5b8afdf4b9afff6001fc45df6f34b2101423e865b4809413764d15812d9
+ENV EMPSTAT_REFRESH_TOKEN_SECRET=b66ccd644eaeb9990c583a5ad66a69f202fa884eb30877f232ae533c6764289f2d968db3ee756d2827a09b4f4b75aa6d0320801c64fc1c154ad8eb0daa0f7c18
+ENV EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME=1h
+ENV EMPSTAT_PASSWORD_HASH_SALT_ROUNDS=10
 
 WORKDIR /root/src
 COPY . .
+RUN npm i
 
 CMD [ "npm", "run", "start" ]

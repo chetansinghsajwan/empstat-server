@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import controller from '../controllers/training'
-import authController from '../controllers/auth'
-import schema from '../schemas/training'
+import controller from '@controllers/training'
+import authController from '@controllers/auth'
+import schema from '@schemas/training'
 
 const router = Router()
 

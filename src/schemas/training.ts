@@ -1,6 +1,6 @@
 import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
-import subject from './subject'
+import subjectSchema from '@schemas/subject'
 
 const mode = zod.enum(['online', 'offline', 'onsite'])
 
@@ -17,7 +17,7 @@ const body = {
     mode: mode,
 
     // id of the subject this training is of
-    subject: subject.body.id,
+    subject: subjectSchema.body.id,
 
     // time when training was started
     startedAt: zod.date().min(new Date(), 'time should be greater than now'),

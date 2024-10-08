@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import userRouter from './user'
-import subjectRouter from './subject'
-import trainingRouter from './training'
-import assessementRouter from './assessment'
+import userRouter from '@routes/user'
+import subjectRouter from '@routes/subject'
+import trainingRouter from '@routes/training'
+import assessementRouter from '@routes/assessment'
 
 const router = Router()
 

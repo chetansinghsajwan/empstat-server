@@ -4,7 +4,7 @@ import assert from 'assert'
 import { env } from 'process'
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { logger } from '../utils/logging'
+import { logger } from '@utils/logging'
 
 const accessTokenSecret: string = env.EMPSTAT_ACCESS_TOKEN_SECRET || ''
 const refreshTokenSecret: string = env.EMPSTAT_REFRESH_TOKEN_SECRET || ''

@@ -1,7 +1,7 @@
 import zod from 'zod'
 import * as zodExpress from 'zod-express-middleware'
-import userSchema from './user'
-import trainingSchema from './training'
+import userSchema from '@schemas/user'
+import trainingSchema from '@schemas/training'
 
 const body = {
     // user id

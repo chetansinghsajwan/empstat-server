@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { env } from 'process'
 import bcrypt from 'bcrypt'
-import { logger } from '../utils/logging'
-import db from '../modals'
+import { logger } from '@utils/logging'
+import db from '@modals'
 import assert from 'assert'
-import authController from './auth'
+import authController from '@controllers/auth'
 
 const passwordHashSaltRounds = parseInt(env.PASSWORD_HASH_SALT_ROUNDS || '10')
 

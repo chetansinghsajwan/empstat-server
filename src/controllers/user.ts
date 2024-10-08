@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import { env } from 'process'
 import bcrypt from 'bcrypt'
 import { logger } from '../utils/logging'
 import db from '../modals'
 import assert from 'assert'
 import authController from './auth'
-import { env } from 'process'
 
 const passwordHashSaltRounds = parseInt(env.PASSWORD_HASH_SALT_ROUNDS || '10')
 
@@ -49,12 +49,16 @@ export async function deleteUser(req: Request, res: Response) {
     if (!user) {
         logger.info('delete user request rejected, user not found')
 
-        return res.status(StatusCodes.NOT_FOUND).send('user not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'user not found',
+        })
     }
 
     logger.info(`delete user request completed`)
 
-    return res.status(StatusCodes.OK).send('user deleted')
+    return res.status(StatusCodes.OK).send({
+        error: 'user deleted',
+    })
 }
 
 export async function loginUser(req: Request, res: Response) {
@@ -70,7 +74,9 @@ export async function loginUser(req: Request, res: Response) {
     if (!user) {
         logger.info('login user request rejected, user not found')
 
-        return res.status(StatusCodes.NOT_FOUND).send('user not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'user not found',
+        })
     }
 
     const secret = await db.secrets.findUnique({
@@ -80,16 +86,18 @@ export async function loginUser(req: Request, res: Response) {
     if (!secret) {
         logger.info('login user request rejected, password not found')
 
-        return res.status(StatusCodes.NOT_FOUND).send('password not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'password not found',
+        })
     }
 
     const passwordMatched = await bcrypt.compare(password, secret.password)
     if (!passwordMatched) {
         logger.info('login user request rejected, password does not match')
 
-        return res
-            .status(StatusCodes.UNAUTHORIZED)
-            .send('password does not match')
+        return res.status(StatusCodes.UNAUTHORIZED).send({
+            error: 'password does not match',
+        })
     }
 
     logger.info('login user request completed')
@@ -110,12 +118,16 @@ export async function getUser(req: Request, res: Response) {
     if (user === null) {
         logger.info('get user request rejected, user not found')
 
-        return res.status(StatusCodes.NOT_FOUND).send('user not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'user not found',
+        })
     }
 
     logger.info('get user request completed')
 
-    return res.status(StatusCodes.OK).send(user)
+    return res.status(StatusCodes.OK).send({
+        user: user,
+    })
 }
 
 export async function getUsers(req: Request, res: Response) {
@@ -129,15 +141,19 @@ export async function getUsers(req: Request, res: Response) {
     })
 
     if (!user) {
-        logger.info('login user request rejected, user not found')
+        logger.info('get users request rejected, user not found')
 
-        return res.status(StatusCodes.NOT_FOUND).send('user not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'user not found',
+        })
     }
 
     const users = await db.user.findMany()
 
-    logger.info('request complete')
-    return res.status(StatusCodes.OK).send(users)
+    logger.info('get users request completed')
+    return res.status(StatusCodes.OK).send({
+        users: users,
+    })
 }
 
 export default {

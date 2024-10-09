@@ -7,7 +7,13 @@ import db from '@modals'
 import assert from 'assert'
 import authController from '@controllers/auth'
 
-const passwordHashSaltRounds = parseInt(env.PASSWORD_HASH_SALT_ROUNDS || '10')
+const passwordHashSaltRoundsString = env['EMPSTAT_PASSWORD_HASH_SALT_ROUNDS']
+assert(
+    passwordHashSaltRoundsString !== undefined,
+    'EMPSTAT_PASSWORD_HASH_SALT_ROUNDS env var is not set',
+)
+
+const passwordHashSaltRounds = parseInt(passwordHashSaltRoundsString)
 
 export async function createUser(req: Request, res: Response) {
     logger.info('create user request recieved')

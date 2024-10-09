@@ -17,19 +17,23 @@ assert(
     'EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME env variable not set',
 )
 
-export function createTokens(req: Request, res: Response, userId: string) {
-    const user = { id: userId }
-    const accessToken = jwt.sign(user, accessTokenSecret, {
+export function createTokens(req: Request, res: Response, userid: string) {
+    // we only allow 'admin' scope for now
+    const scope = 'admin'
+
+    const tokenData = { id: userid, scope: scope }
+    const accessToken = jwt.sign(tokenData, accessTokenSecret, {
         expiresIn: accessTokenExpireTime,
     })
 
-    const refreshToken = jwt.sign(user, refreshTokenSecret)
+    const refreshToken = jwt.sign(tokenData, refreshTokenSecret)
 
-    return res
-        .status(StatusCodes.OK)
-        .cookie('accessToken', accessToken)
-        .cookie('refreshToken', refreshToken)
-        .send()
+    return res.status(StatusCodes.OK).send({
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        expiresIn: accessTokenExpireTime,
+        scope: scope,
+    })
 }
 
 export function validateAccessToken(
@@ -41,11 +45,12 @@ export function validateAccessToken(
         logger.info('validating access token')
 
         const token = req.cookies.accessToken
-        const user = jwt.verify(token, accessTokenSecret)
+        const tokenData = jwt.verify(token, accessTokenSecret) as jwt.JwtPayload
 
         logger.info('validating access token successfull')
 
-        res.locals.user = (user as any).id
+        res.locals.user = tokenData.id
+        res.locals.scope = tokenData.scope
         next()
     } catch (error) {
         logger.error(
@@ -66,11 +71,15 @@ export function validateRefreshToken(
         logger.info('validating refresh token')
 
         const token = req.cookies.refreshToken
-        const user = jwt.verify(token, refreshTokenSecret)
+        const tokenData = jwt.verify(
+            token,
+            refreshTokenSecret,
+        ) as jwt.JwtPayload
 
         logger.info('validating refresh token successfull')
 
-        res.locals.user = (user as any).id
+        res.locals.user = tokenData.id
+        res.locals.scope = tokenData.scope
         next()
     } catch (error) {
         logger.error('validating refresh token failed, invalid token', error)
@@ -82,17 +91,23 @@ export function validateRefreshToken(
 export function refreshAccessToken(req: Request, res: Response) {
     logger.info('refresh access token request recieved')
 
-    const userId = res.locals.user
-    assert(userId)
+    const userid = res.locals.user
+    assert(userid)
 
-    const user = { id: userId }
+    const scope = res.locals.scope
+    assert(scope)
+
+    const user = { id: userid, scope: scope }
     const accessToken = jwt.sign(user, accessTokenSecret, {
         expiresIn: accessTokenExpireTime,
     })
 
     logger.info('refresh access token request completed')
 
-    return res.status(StatusCodes.OK).cookie('accessToken', accessToken).send()
+    return res.status(StatusCodes.OK).send({
+        accessToken: accessToken,
+        expiresIn: accessTokenExpireTime,
+    })
 }
 
 export default {

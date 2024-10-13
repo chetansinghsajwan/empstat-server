@@ -1,10 +1,133 @@
 import { Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import { logger } from '@utils/logging'
+import db from '@modals'
 
-export async function createSubject(req: Request, res: Response) {}
-export async function deleteSubject(req: Request, res: Response) {}
-export async function updateSubject(req: Request, res: Response) {}
-export async function getSubject(req: Request, res: Response) {}
-export async function getSubjects(req: Request, res: Response) {}
+export async function createSubject(req: Request, res: Response) {
+    logger.info('create subject request received')
+
+    const { id, name, minMarks, maxMarks, totalTime } = req.body
+
+    const existingSubject = await db.subject.findUnique({
+        where: { id },
+    })
+
+    if (existingSubject !== null) {
+        logger.info(
+            'create subject request rejected, subject with this id already exists',
+        )
+        return res.status(StatusCodes.CONFLICT).send({
+            error: 'subject with this id already exists',
+        })
+    }
+
+    const subject = await db.subject.create({
+        data: {
+            id,
+            name,
+            minMarks,
+            maxMarks,
+            totalTime,
+        },
+    })
+
+    logger.info('create subject request completed')
+    return res.status(StatusCodes.CREATED).send({
+        subject,
+    })
+}
+
+export async function deleteSubject(req: Request, res: Response) {
+    logger.info('delete subject request received')
+
+    const { id } = req.params
+
+    const subject = await db.subject.findUnique({
+        where: { id },
+    })
+
+    if (!subject) {
+        logger.info('delete subject request rejected, subject not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'subject not found',
+        })
+    }
+
+    await db.subject.delete({
+        where: { id },
+    })
+
+    logger.info('delete subject request completed')
+    return res.status(StatusCodes.OK).send({
+        message: 'subject deleted successfully',
+    })
+}
+
+export async function updateSubject(req: Request, res: Response) {
+    logger.info('update subject request received')
+
+    const { id } = req.params
+    const { name, minMarks, maxMarks, totalTime } = req.body
+
+    const subject = await db.subject.findUnique({
+        where: { id },
+    })
+
+    if (!subject) {
+        logger.info('update subject request rejected, subject not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'subject not found',
+        })
+    }
+
+    const updatedSubject = await db.subject.update({
+        where: { id },
+        data: {
+            name,
+            minMarks,
+            maxMarks,
+            totalTime,
+        },
+    })
+
+    logger.info('update subject request completed')
+    return res.status(StatusCodes.OK).send({
+        subject: updatedSubject,
+    })
+}
+
+export async function getSubject(req: Request, res: Response) {
+    logger.info('get subject request received')
+
+    const { id } = req.params
+
+    const subject = await db.subject.findUnique({
+        where: { id },
+    })
+
+    if (!subject) {
+        logger.info('get subject request rejected, subject not found')
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'subject not found',
+        })
+    }
+
+    logger.info('get subject request completed')
+    return res.status(StatusCodes.OK).send({
+        subject,
+    })
+}
+
+export async function getSubjects(req: Request, res: Response) {
+    logger.info('get subjects request received')
+
+    const subjects = await db.subject.findMany()
+
+    logger.info('get subjects request completed')
+    return res.status(StatusCodes.OK).send({
+        subjects,
+    })
+}
 
 export default {
     createSubject,

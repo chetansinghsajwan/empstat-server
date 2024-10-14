@@ -7,6 +7,8 @@ const passwordRegex = new RegExp(
 
 const id = zod.string().min(1, 'id cannot be empty').trim().toLowerCase()
 
+const role = zod.enum(['admin', 'employee'])
+
 const body = {
     id: id,
 
@@ -24,7 +26,13 @@ const body = {
             and one special character',
     ),
 
-    name: zod.string().min(1, 'name cannot be empty').trim(),
+    first_name: zod.string().min(1, 'first name cannot be empty').trim(),
+
+    middle_name: zod.string().trim(),
+
+    last_name: zod.string().trim(),
+
+    role: role,
 }
 
 const createUser = {

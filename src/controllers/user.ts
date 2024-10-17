@@ -122,7 +122,7 @@ export async function loginUser(req: Request, res: Response) {
         })
     }
 
-    const secret = await prisma.secrets.findUnique({
+    const secret = await prisma.secret.findUnique({
         where: { userId: userId },
     })
 

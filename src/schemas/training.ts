@@ -20,10 +20,10 @@ const body = {
     subject: subjectSchema.body.id,
 
     // time when training was started
-    startedAt: zod.date().min(new Date(), 'time should be greater than now'),
+    startedAt: zod.string().datetime().min(0, 'time should be greater than now'),
 
     // time when training was ended
-    endedAt: zod.date().min(new Date(), 'time should be greater than now'),
+    endedAt: zod.string().datetime().min(0, 'time should be greater than now'),
 }
 
 const createTraining = {

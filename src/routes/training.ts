@@ -27,17 +27,17 @@ router.put(
 )
 
 router.get(
-    '/:id',
-    authController.validateAccessToken,
-    schema.validateGetTrainingRequest,
-    controller.getTraining,
-)
-
-router.get(
     '/all',
     authController.validateAccessToken,
     schema.validateGetTrainingsRequest,
     controller.getTrainings,
+)
+
+router.get(
+    '/:id',
+    authController.validateAccessToken,
+    schema.validateGetTrainingRequest,
+    controller.getTraining,
 )
 
 export default router

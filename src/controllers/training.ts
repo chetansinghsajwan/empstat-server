@@ -4,122 +4,128 @@ import { logger } from '@utils/logging'
 import prisma from '@modals'
 
 export async function createTraining(req: Request, res: Response) {
+    logger.info('create training request recieved.')
+
     const { id, name, mode, subject, startedAt, endedAt } = req.body
 
-    try {
-        const existingSubject = await prisma.subject.findUnique({
-            where: { id: subject },
+    const existingSubject = await prisma.subject.findUnique({
+        where: { id: subject },
+    })
+
+    if (!existingSubject) {
+        logger.info('create training request rejected, subject does not exist.')
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'subject does not exist',
         })
-
-        if (!existingSubject) {
-            return res
-                .status(StatusCodes.BAD_REQUEST)
-                .send('Invalid subject ID.')
-        }
-
-        const newTraining = await prisma.training.create({
-            data: {
-                id,
-                name,
-                mode,
-                subjectId: subject,
-                startedAt,
-                endedAt,
-            },
-        })
-
-        logger.info(`Training created: ${newTraining.id}`)
-        return res.status(StatusCodes.CREATED).json(newTraining)
-    } catch (error) {
-        logger.error('Error creating training:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error creating training.')
     }
+
+    const newTraining = await prisma.training.create({
+        data: {
+            id,
+            name,
+            mode,
+            subjectId: subject,
+            startedAt,
+            endedAt,
+        },
+    })
+
+    logger.info(`create training request completed.`)
+    return res.status(StatusCodes.CREATED).json(newTraining)
 }
 
 export async function deleteTraining(req: Request, res: Response) {
+    logger.info(`delete training request received.`)
+
     const { id } = req.params
 
-    try {
-        const training = await prisma.training.delete({
-            where: { id },
-        })
+    const training = await prisma.training.delete({
+        where: { id },
+    })
 
-        logger.info(`Training deleted: ${training.id}`)
-        return res.status(StatusCodes.OK).send('Training deleted successfully.')
-    } catch (error) {
-        logger.error('Error deleting training:', error)
-        return res.status(StatusCodes.NOT_FOUND).send('Training not found.')
+    if (!training) {
+        logger.info(
+            'delete trainin request rejected, training does not exsist.',
+        )
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'training does not exist',
+        })
     }
+
+    logger.info(`delete training request completed.`)
+    return res.status(StatusCodes.OK).send({
+        training: training.id,
+    })
 }
 
 export async function updateTraining(req: Request, res: Response) {
+    logger.info(`update training request received.`)
+
     const { id } = req.params
     const { name, mode, subject, startedAt, endedAt } = req.body
 
-    try {
-        const existingSubject = await prisma.subject.findUnique({
-            where: { id: subject },
+    const existingSubject = await prisma.subject.findUnique({
+        where: { id: subject },
+    })
+
+    if (!existingSubject) {
+        logger.info(
+            `update training request rejected, training does not exist.`,
+        )
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'training does not exist',
         })
-
-        if (!existingSubject) {
-            return res
-                .status(StatusCodes.BAD_REQUEST)
-                .send('Invalid subject ID.')
-        }
-
-        const updatedTraining = await prisma.training.update({
-            where: { id },
-            data: {
-                name,
-                mode,
-                subjectId: subject,
-                startedAt,
-                endedAt,
-            },
-        })
-
-        logger.info(`Training updated: ${updatedTraining.id}`)
-        return res.status(StatusCodes.OK).json(updatedTraining)
-    } catch (error) {
-        logger.error('Error updating training:', error)
-        return res.status(StatusCodes.NOT_FOUND).send('Training not found.')
     }
+
+    const updatedTraining = await prisma.training.update({
+        where: { id },
+        data: {
+            name,
+            mode,
+            subjectId: subject,
+            startedAt,
+            endedAt,
+        },
+    })
+
+    logger.info(`update training request completed.`)
+
+    return res.status(StatusCodes.OK).json({
+        training: updatedTraining.id,
+    })
 }
 
 export async function getTraining(req: Request, res: Response) {
+    logger.info(`get training request received.`)
+
     const { id } = req.params
 
-    try {
-        const training = await prisma.training.findUnique({
-            where: { id },
+    const training = await prisma.training.findUnique({
+        where: { id },
+    })
+
+    if (!training) {
+        logger.info(`get training request rejected, training does not exist.`)
+
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'training does not exist',
         })
-
-        if (!training) {
-            return res.status(StatusCodes.NOT_FOUND).send('Training not found.')
-        }
-
-        return res.status(StatusCodes.OK).json(training)
-    } catch (error) {
-        logger.error('Error retrieving training:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error retrieving training.')
     }
+
+    logger.info(`get training request completed.`)
+
+    return res.status(StatusCodes.OK).json(training)
 }
 
 export async function getTrainings(req: Request, res: Response) {
-    try {
-        const trainings = await prisma.training.findMany()
+    const trainings = await prisma.training.findMany()
 
-        return res.status(StatusCodes.OK).json(trainings)
-    } catch (error) {
-        logger.error('Error retrieving trainings:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error retrieving trainings.')
-    }
+    return res.status(StatusCodes.OK).json({
+        trainings: trainings,
+    })
 }
 
 export default {

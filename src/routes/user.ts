@@ -19,15 +19,15 @@ router.post('/login', schemas.validateLoginUserRequest, controller.loginUser)
 router.get(
     '',
     authController.validateAccessToken,
-    schemas.validateGetUsersRequest,
-    controller.getUsers,
+    schemas.validateGetUserRequest,
+    controller.getUser,
 )
 
 router.get(
-    '',
+    '/all',
     authController.validateAccessToken,
-    schemas.validateGetUserRequest,
-    controller.getUser,
+    schemas.validateGetUsersRequest,
+    controller.getUsers,
 )
 
 export default router

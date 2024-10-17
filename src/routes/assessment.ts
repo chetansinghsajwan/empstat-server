@@ -13,24 +13,17 @@ router.post(
 )
 
 router.delete(
-    '/:id',
+    '/:userId/:trainingId',
     authController.validateAccessToken,
     schema.validateDeleteAssessmentRequest,
     controller.deleteAssessment,
 )
 
 router.put(
-    '/:id',
+    '/:userId/:trainingId',
     authController.validateAccessToken,
     schema.validateUpdateAssessmentRequest,
     controller.updateAssessment,
-)
-
-router.get(
-    '/:id',
-    authController.validateAccessToken,
-    schema.validateGetAssessmentRequest,
-    controller.getAssessment,
 )
 
 router.get(
@@ -38,6 +31,13 @@ router.get(
     authController.validateAccessToken,
     schema.validateGetAssessmentsRequest,
     controller.getAssessments,
+)
+
+router.get(
+    '/:userId/:trainingId',
+    authController.validateAccessToken,
+    schema.validateGetAssessmentRequest,
+    controller.getAssessment,
 )
 
 export default router

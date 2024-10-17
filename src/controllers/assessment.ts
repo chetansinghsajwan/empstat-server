@@ -4,127 +4,170 @@ import { logger } from '@utils/logging'
 import prisma from '@modals'
 
 export async function createAssessment(req: Request, res: Response) {
+    logger.info('create assessment request recieved')
+
     const { userId, trainingId, marks, internetAllowed } = req.body
 
-    try {
-        const newAssessment = await prisma.assessment.create({
-            data: {
-                userId,
-                trainingId,
-                marks,
-                internetAllowed,
-            },
-        })
+    const existingUser = prisma.user.findUnique({
+        where: { id: userId },
+    })
+    if (!existingUser) {
+        logger.info('create assessment request rejected, user not found')
 
-        logger.info(
-            `Assessment created: User: ${userId}, Training: ${trainingId}`,
-        )
-        return res.status(StatusCodes.CREATED).json(newAssessment)
-    } catch (error) {
-        logger.error('Error creating assessment:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error creating assessment.')
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'user does not exist',
+        })
     }
+
+    const existingTraining = prisma.training.findUnique({
+        where: { id: trainingId },
+    })
+    if (!existingTraining) {
+        logger.info('create assessment request rejected, training not found')
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'training does not exist',
+        })
+    }
+
+    const newAssessment = await prisma.assessment.create({
+        data: {
+            userId,
+            trainingId,
+            marks,
+            internetAllowed,
+        },
+    })
+
+    logger.info('create assessment request completed.')
+
+    return res.status(StatusCodes.CREATED).json({
+        assessment: {
+            userId: newAssessment.userId,
+            trainingId: newAssessment.trainingId,
+        },
+    })
 }
 
 export async function deleteAssessment(req: Request, res: Response) {
+    logger.info('delete assessment request recieved')
+
     const { userId, trainingId } = req.params
 
-    try {
-        await prisma.assessment.delete({
-            where: {
-                userId_trainingId: {
-                    userId,
-                    trainingId,
-                },
+    const deletedAssessment = await prisma.assessment.delete({
+        where: {
+            userId_trainingId: {
+                userId,
+                trainingId,
             },
-        })
+        },
+    })
 
+    if (!deletedAssessment) {
         logger.info(
-            `Assessment deleted: User: ${userId}, Training: ${trainingId}`,
+            'delete assessment request rejected, assessment does not exist',
         )
-        return res.status(StatusCodes.NO_CONTENT).send()
-    } catch (error) {
-        logger.error('Error deleting assessment:', error)
-        return res.status(StatusCodes.NOT_FOUND).send('Assessment not found.')
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'assessment does not exist',
+        })
     }
+
+    logger.info('delete assessment request completed')
+    return res.status(StatusCodes.OK).send()
 }
 
 export async function updateAssessment(req: Request, res: Response) {
+    logger.info('update assessment request recieved')
+
     const { userId, trainingId } = req.params
     const { marks, internetAllowed } = req.body
 
-    try {
-        const updatedAssessment = await prisma.assessment.update({
-            where: {
-                userId_trainingId: {
-                    userId,
-                    trainingId,
-                },
+    const existingAssessment = await prisma.assessment.findUnique({
+        where: {
+            userId_trainingId: {
+                userId: userId,
+                trainingId: trainingId,
             },
-            data: {
-                marks,
-                internetAllowed,
-            },
-        })
+        },
+    })
 
-        logger.info(
-            `Assessment updated: User: ${userId}, Training: ${trainingId}`,
-        )
-        return res.status(StatusCodes.OK).json(updatedAssessment)
-    } catch (error) {
-        logger.error('Error updating assessment:', error)
-        return res.status(StatusCodes.NOT_FOUND).send('Assessment not found.')
+    if (!existingAssessment) {
+        logger.info('update assessment request rejected, assessment not found')
+
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            error: 'assessment not found',
+        })
     }
+
+    const updatedAssessment = await prisma.assessment.update({
+        where: {
+            userId_trainingId: {
+                userId,
+                trainingId,
+            },
+        },
+        data: {
+            marks,
+            internetAllowed,
+        },
+    })
+
+    logger.info('update assessment request completed')
+
+    return res.status(StatusCodes.OK).json({
+        assessment: {
+            userId: updatedAssessment.userId,
+            trainingId: updatedAssessment.trainingId,
+        },
+    })
 }
 
 export async function getAssessment(req: Request, res: Response) {
+    logger.info('get assessment request received')
+
     const { userId, trainingId } = req.params
 
-    try {
-        const assessment = await prisma.assessment.findUnique({
-            where: {
-                userId_trainingId: {
-                    userId,
-                    trainingId,
-                },
+    const assessment = await prisma.assessment.findUnique({
+        where: {
+            userId_trainingId: {
+                userId,
+                trainingId,
             },
+        },
+    })
+
+    if (!assessment) {
+        logger.info('get assessment request rejected, assessment not found')
+
+        return res.status(StatusCodes.NOT_FOUND).send({
+            error: 'assessment not found.',
         })
-
-        if (!assessment) {
-            return res
-                .status(StatusCodes.NOT_FOUND)
-                .send('Assessment not found.')
-        }
-
-        return res.status(StatusCodes.OK).json(assessment)
-    } catch (error) {
-        logger.error('Error retrieving assessment:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error retrieving assessment.')
     }
+
+    logger.info('get assessment request completed')
+    return res.status(StatusCodes.OK).json({
+        assessment: assessment,
+    })
 }
 
 export async function getAssessments(req: Request, res: Response) {
+    logger.info('get assessments request received')
+
     const { userId, trainingId } = req.query
 
-    try {
-        const assessments = await prisma.assessment.findMany({
-            where: {
-                ...(userId ? { userId: String(userId) } : {}),
-                ...(trainingId ? { trainingId: String(trainingId) } : {}),
-            },
-        })
+    const assessments = await prisma.assessment.findMany({
+        where: {
+            ...(userId ? { userId: String(userId) } : {}),
+            ...(trainingId ? { trainingId: String(trainingId) } : {}),
+        },
+    })
 
-        return res.status(StatusCodes.OK).json(assessments)
-    } catch (error) {
-        logger.error('Error retrieving assessments:', error)
-        return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .send('Error retrieving assessments.')
-    }
+    logger.info('get assessments request completed')
+
+    return res.status(StatusCodes.OK).json({
+        assessments: assessments,
+    })
 }
 
 export default {

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
-import db from '@modals'
+import prisma from '@modals'
 
 export async function createAssessment(req: Request, res: Response) {
     const { userId, trainingId, marks, internetAllowed } = req.body
 
     try {
-        const newAssessment = await db.assessment.create({
+        const newAssessment = await prisma.assessment.create({
             data: {
                 userId,
                 trainingId,
@@ -32,7 +32,7 @@ export async function deleteAssessment(req: Request, res: Response) {
     const { userId, trainingId } = req.params
 
     try {
-        await db.assessment.delete({
+        await prisma.assessment.delete({
             where: {
                 userId_trainingId: {
                     userId,
@@ -56,7 +56,7 @@ export async function updateAssessment(req: Request, res: Response) {
     const { marks, internetAllowed } = req.body
 
     try {
-        const updatedAssessment = await db.assessment.update({
+        const updatedAssessment = await prisma.assessment.update({
             where: {
                 userId_trainingId: {
                     userId,
@@ -83,7 +83,7 @@ export async function getAssessment(req: Request, res: Response) {
     const { userId, trainingId } = req.params
 
     try {
-        const assessment = await db.assessment.findUnique({
+        const assessment = await prisma.assessment.findUnique({
             where: {
                 userId_trainingId: {
                     userId,
@@ -111,7 +111,7 @@ export async function getAssessments(req: Request, res: Response) {
     const { userId, trainingId } = req.query
 
     try {
-        const assessments = await db.assessment.findMany({
+        const assessments = await prisma.assessment.findMany({
             where: {
                 ...(userId ? { userId: String(userId) } : {}),
                 ...(trainingId ? { trainingId: String(trainingId) } : {}),

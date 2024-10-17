@@ -1,14 +1,14 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
-import db from '@modals'
+import prisma from '@modals'
 
 export async function createSubject(req: Request, res: Response) {
     logger.info('create subject request received')
 
     const { id, name, minMarks, maxMarks, totalTime } = req.body
 
-    const existingSubject = await db.subject.findUnique({
+    const existingSubject = await prisma.subject.findUnique({
         where: { id },
     })
 
@@ -21,7 +21,7 @@ export async function createSubject(req: Request, res: Response) {
         })
     }
 
-    const subject = await db.subject.create({
+    const subject = await prisma.subject.create({
         data: {
             id,
             name,
@@ -42,7 +42,7 @@ export async function deleteSubject(req: Request, res: Response) {
 
     const { id } = req.params
 
-    const subject = await db.subject.findUnique({
+    const subject = await prisma.subject.findUnique({
         where: { id },
     })
 
@@ -53,7 +53,7 @@ export async function deleteSubject(req: Request, res: Response) {
         })
     }
 
-    await db.subject.delete({
+    await prisma.subject.delete({
         where: { id },
     })
 
@@ -69,7 +69,7 @@ export async function updateSubject(req: Request, res: Response) {
     const { id } = req.params
     const { name, minMarks, maxMarks, totalTime } = req.body
 
-    const subject = await db.subject.findUnique({
+    const subject = await prisma.subject.findUnique({
         where: { id },
     })
 
@@ -80,7 +80,7 @@ export async function updateSubject(req: Request, res: Response) {
         })
     }
 
-    const updatedSubject = await db.subject.update({
+    const updatedSubject = await prisma.subject.update({
         where: { id },
         data: {
             name,
@@ -101,7 +101,7 @@ export async function getSubject(req: Request, res: Response) {
 
     const { id } = req.params
 
-    const subject = await db.subject.findUnique({
+    const subject = await prisma.subject.findUnique({
         where: { id },
     })
 
@@ -121,7 +121,7 @@ export async function getSubject(req: Request, res: Response) {
 export async function getSubjects(req: Request, res: Response) {
     logger.info('get subjects request received')
 
-    const subjects = await db.subject.findMany()
+    const subjects = await prisma.subject.findMany()
 
     logger.info('get subjects request completed')
     return res.status(StatusCodes.OK).send({

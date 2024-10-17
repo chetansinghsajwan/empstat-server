@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
-import db from '@modals'
+import prisma from '@modals'
 
 export async function createTraining(req: Request, res: Response) {
     const { id, name, mode, subject, startedAt, endedAt } = req.body
 
     try {
-        const existingSubject = await db.subject.findUnique({
+        const existingSubject = await prisma.subject.findUnique({
             where: { id: subject },
         })
 
@@ -17,7 +17,7 @@ export async function createTraining(req: Request, res: Response) {
                 .send('Invalid subject ID.')
         }
 
-        const newTraining = await db.training.create({
+        const newTraining = await prisma.training.create({
             data: {
                 id,
                 name,
@@ -42,7 +42,7 @@ export async function deleteTraining(req: Request, res: Response) {
     const { id } = req.params
 
     try {
-        const training = await db.training.delete({
+        const training = await prisma.training.delete({
             where: { id },
         })
 
@@ -59,7 +59,7 @@ export async function updateTraining(req: Request, res: Response) {
     const { name, mode, subject, startedAt, endedAt } = req.body
 
     try {
-        const existingSubject = await db.subject.findUnique({
+        const existingSubject = await prisma.subject.findUnique({
             where: { id: subject },
         })
 
@@ -69,7 +69,7 @@ export async function updateTraining(req: Request, res: Response) {
                 .send('Invalid subject ID.')
         }
 
-        const updatedTraining = await db.training.update({
+        const updatedTraining = await prisma.training.update({
             where: { id },
             data: {
                 name,
@@ -92,7 +92,7 @@ export async function getTraining(req: Request, res: Response) {
     const { id } = req.params
 
     try {
-        const training = await db.training.findUnique({
+        const training = await prisma.training.findUnique({
             where: { id },
         })
 
@@ -111,7 +111,7 @@ export async function getTraining(req: Request, res: Response) {
 
 export async function getTrainings(req: Request, res: Response) {
     try {
-        const trainings = await db.training.findMany()
+        const trainings = await prisma.training.findMany()
 
         return res.status(StatusCodes.OK).json(trainings)
     } catch (error) {

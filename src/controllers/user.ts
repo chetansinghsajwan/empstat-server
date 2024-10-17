@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { env } from 'process'
 import bcrypt from 'bcrypt'
 import { logger } from '@utils/logging'
-import db from '@modals'
+import prisma from '@modals'
 import assert from 'assert'
 import authController from '@controllers/auth'
 import { Prisma } from '@prisma/client'
@@ -19,7 +19,7 @@ const passwordHashSaltRounds = parseInt(passwordHashSaltRoundsString)
 export async function createUser(req: Request, res: Response) {
     logger.info('create user request recieved')
 
-    const existingUser = await db.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
         where: { id: req.body.id },
     })
 
@@ -33,7 +33,7 @@ export async function createUser(req: Request, res: Response) {
         })
     }
 
-    const userWithExistingEmail = await db.user.findUnique({
+    const userWithExistingEmail = await prisma.user.findUnique({
         where: { email: req.body.email },
     })
 
@@ -62,7 +62,7 @@ export async function createUser(req: Request, res: Response) {
     }
 
     logger.info('creating user...')
-    const user = await db.user.create({ data: userCreateInput })
+    const user = await prisma.user.create({ data: userCreateInput })
     logger.info('creating user done.')
 
     const secretCreateInput: Prisma.SecretCreateInput = {
@@ -73,7 +73,7 @@ export async function createUser(req: Request, res: Response) {
     }
 
     logger.info('creating secret...')
-    await db.secret.create({ data: secretCreateInput })
+    await prisma.secret.create({ data: secretCreateInput })
     logger.info('creating secret done.')
 
     logger.info('create user request completed')
@@ -87,7 +87,7 @@ export async function deleteUser(req: Request, res: Response) {
     const userId = res.locals.user
     assert(userId)
 
-    const user = await db.user.delete({ where: { id: userId } })
+    const user = await prisma.user.delete({ where: { id: userId } })
 
     if (!user) {
         logger.info('delete user request rejected, user not found')
@@ -110,7 +110,7 @@ export async function loginUser(req: Request, res: Response) {
     const userId = req.body.id
     const password = req.body.password
 
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: userId },
     })
 
@@ -122,7 +122,7 @@ export async function loginUser(req: Request, res: Response) {
         })
     }
 
-    const secret = await db.secrets.findUnique({
+    const secret = await prisma.secrets.findUnique({
         where: { userId: userId },
     })
 
@@ -154,7 +154,7 @@ export async function getUser(req: Request, res: Response) {
 
     logger.info(`get user request recieved, id:${userId}`)
 
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: userId },
     })
 
@@ -179,7 +179,7 @@ export async function getUsers(req: Request, res: Response) {
     const userId = res.locals.user
     assert(userId)
 
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: userId },
     })
 
@@ -191,7 +191,7 @@ export async function getUsers(req: Request, res: Response) {
         })
     }
 
-    const users = await db.user.findMany()
+    const users = await prisma.user.findMany()
 
     logger.info('get users request completed')
     return res.status(StatusCodes.OK).send({

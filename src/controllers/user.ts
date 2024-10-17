@@ -62,7 +62,7 @@ export async function createUser(req: Request, res: Response) {
     }
 
     logger.info('creating user...')
-    const user = await prisma.user.create({ data: userCreateInput })
+    const newUser = await prisma.user.create({ data: userCreateInput })
     logger.info('creating user done.')
 
     const secretCreateInput: Prisma.SecretCreateInput = {
@@ -78,7 +78,7 @@ export async function createUser(req: Request, res: Response) {
 
     logger.info('create user request completed')
 
-    return authController.createTokens(req, res, user.id)
+    return authController.createTokens(req, res, newUser.id)
 }
 
 export async function deleteUser(req: Request, res: Response) {

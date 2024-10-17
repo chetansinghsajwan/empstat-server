@@ -6,6 +6,7 @@ import { logger } from '@utils/logging'
 import db from '@modals'
 import assert from 'assert'
 import authController from '@controllers/auth'
+import { Prisma } from '@prisma/client'
 
 const passwordHashSaltRoundsString = env['EMPSTAT_PASSWORD_HASH_SALT_ROUNDS']
 assert(
@@ -22,23 +23,59 @@ export async function createUser(req: Request, res: Response) {
         where: { id: req.body.id },
     })
 
-    if (existingUser !== null) {
+    if (existingUser) {
         logger.info(
             'create user request rejected, user with this id address already exists',
         )
 
         return res.status(StatusCodes.CONFLICT).send({
-            error: 'create user request rejected, user with this id address already exists',
+            error: 'user with this id address already exists',
         })
     }
 
-    const hashPassword = await bcrypt.hash(
+    const userWithExistingEmail = await db.user.findUnique({
+        where: { email: req.body.email },
+    })
+
+    if (userWithExistingEmail) {
+        logger.info(
+            'create user request rejected, user with email already exists.',
+        )
+
+        return res.status(StatusCodes.CONFLICT).send({
+            error: 'user with this email address already exists',
+        })
+    }
+
+    const hashedPassword = await bcrypt.hash(
         req.body.password,
         passwordHashSaltRounds,
     )
-    req.body.password = hashPassword
 
-    const user = await db.user.create({ data: req.body })
+    const userCreateInput: Prisma.UserCreateInput = {
+        id: req.body.id,
+        email: req.body.email,
+        firstName: req.body.firstName,
+        middleName: req.body.middleName ?? '',
+        lastName: req.body.lastName ?? '',
+        role: req.body.role,
+    }
+
+    logger.info('creating user...')
+    const user = await db.user.create({ data: userCreateInput })
+    logger.info('creating user done.')
+
+    const secretCreateInput: Prisma.SecretCreateInput = {
+        user: {
+            connect: { id: req.body.id },
+        },
+        password: hashedPassword,
+    }
+
+    logger.info('creating secret...')
+    await db.secret.create({ data: secretCreateInput })
+    logger.info('creating secret done.')
+
     logger.info('create user request completed')
 
     return authController.createTokens(req, res, user.id)

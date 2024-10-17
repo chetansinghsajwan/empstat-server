@@ -7,79 +7,87 @@ datasource db {
   url      = env("EMPSTAT_DATABASE_URL")
 }
 
-enum Role {
-  Admin
-  Employee
+enum UserRole {
+  admin
+  employee
+
+  @@map("user_roles")
 }
 
 model User {
-  id          String  @id
-  email       String  @unique
-  first_name  String
-  middle_name String?
-  last_name   String?
-  role        Role
+  id         String   @id
+  email      String   @unique
+  firstName  String   @map("first_name")
+  middleName String?  @map("middle_name")
+  lastName   String?  @map("last_name")
+  role       UserRole
 
-  trainingId String?
-  Training   Training? @relation(fields: [trainingId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   Assessment Assessment[]
-  Secrets        Secrets[]
+  Secret    Secret[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("users")
 }
 
-model Secrets {
-  userId String @id
+model Secret {
+  userId String @id @map("user_id")
   user   User   @relation(fields: [userId], references: [id])
 
   password String
+
+  @@map("secrets")
 }
 
 model Subject {
   id        String @id
   name      String
-  minMarks  Int
-  maxMarks  Int
-  totalTime Int
+  minMarks  Int    @map("min_marks")
+  maxMarks  Int    @map("max_marks")
+  totalTime Int    @map("total_time")
 
-  trainingId String?
+  Training Training[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Training  Training[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subjects")
 }
 
 enum TrainingMode {
   online
   offline
   onsite
+
+  @@map("training_modes")
 }
 
 model Training {
-  id              String           @id
-  name            String
-  mode            TrainingMode
-  subjectId       String
-  subject         Subject          @relation(fields: [subjectId], references: [id])
-  users           User[]
-  startedAt       DateTime
-  endedAt         DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  Assessment  Assessment[]
+  id         String       @id
+  name       String
+  mode       TrainingMode
+  subjectId  String       @map("subject_id")
+  subject    Subject      @relation(fields: [subjectId], references: [id])
+  startedAt  DateTime     @map("started_at")
+  endedAt    DateTime?    @map("ended_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  Assessment Assessment[]
+
+  @@map("trainings")
 }
 
 model Assessment {
-  userId String
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id])
 
-  trainingId String
+  trainingId String   @map("training_id")
   training   Training @relation(fields: [trainingId], references: [id])
 
-  marks Int
-  internetAllowed Boolean
+  marks           Int
+  internetAllowed Boolean @map("internet_allowed")
 
   @@id([userId, trainingId])
+  @@map("assessments")
 }

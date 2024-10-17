@@ -26,11 +26,11 @@ const body = {
             and one special character',
     ),
 
-    first_name: zod.string().min(1, 'first name cannot be empty').trim(),
+    firstName: zod.string().min(1, 'first name cannot be empty').trim(),
 
-    middle_name: zod.string().trim(),
+    middleName: zod.string().trim(),
 
-    last_name: zod.string().trim(),
+    lastName: zod.string().trim(),
 
     role: role,
 }

@@ -8,7 +8,7 @@ import assert from 'assert'
 import authController from '@controllers/auth'
 import { Prisma } from '@prisma/client'
 
-const passwordHashSaltRoundsString = env['EMPSTAT_PASSWORD_HASH_SALT_ROUNDS']
+const passwordHashSaltRoundsString = env.EMPSTAT_SERVER_PASSWORD_HASH_SALT_ROUNDS
 assert(
     passwordHashSaltRoundsString !== undefined,
     'EMPSTAT_PASSWORD_HASH_SALT_ROUNDS env var is not set',

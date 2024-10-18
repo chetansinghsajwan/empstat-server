@@ -2,8 +2,6 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 import { env } from 'process'
 
-const mode = env.EMPSTAT_NODE_ENV || 'dev'
-
 const consoleTransport = new winston.transports.Console({
     format: winston.format.cli(),
     handleExceptions: true,
@@ -11,7 +9,7 @@ const consoleTransport = new winston.transports.Console({
 })
 
 export const logger = winston.createLogger({
-    level: env.EMPSTAT_LOG_LEVEL || 'info',
+    level: env.EMPSTAT_SERVER_LOG_LEVEL || 'info',
     format: winston.format.json(),
     transports: [consoleTransport],
 })

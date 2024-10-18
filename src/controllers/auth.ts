@@ -6,9 +6,9 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 
-const accessTokenSecret: string = env.EMPSTAT_ACCESS_TOKEN_SECRET || ''
-const refreshTokenSecret: string = env.EMPSTAT_REFRESH_TOKEN_SECRET || ''
-const accessTokenExpireTime: string = env.EMPSTAT_ACCESS_TOKEN_EXPIRE_TIME || ''
+const accessTokenSecret: string = env.EMPSTAT_SERVER_ACCESS_TOKEN_SECRET || ''
+const refreshTokenSecret: string = env.EMPSTAT_SERVER_REFRESH_TOKEN_SECRET || ''
+const accessTokenExpireTime: string = env.EMPSTAT_SERVER_ACCESS_TOKEN_EXPIRE_TIME || ''
 
 assert(accessTokenSecret, 'EMPSTAT_ACCESS_TOKEN_SECRET env variable not set')
 assert(refreshTokenSecret, 'EMPSTAT_REFRESH_TOKEN_SECRET env variable not set')

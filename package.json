@@ -13,6 +13,9 @@
         "lint": "eslint .",
         "lint:fix": "eslint . --fix"
     },
+    "prisma": {
+        "seed": "tsx prisma/seed.ts"
+    },
     "dependencies": {
         "@prisma/client": "^5.20.0",
         "bcrypt": "^5.1.1",
@@ -31,8 +34,8 @@
         "zod-express-middleware": "^1.4.0"
     },
     "devDependencies": {
-        "prisma": "^5.20.0",
         "@eslint/js": "^9.11.1",
+        "@faker-js/faker": "^9.0.3",
         "@types/bcrypt": "^5.0.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/cors": "^2.8.17",
@@ -46,6 +49,7 @@
         "globals": "^15.10.0",
         "jest": "^29.7.0",
         "prettier": "3.3.3",
+        "prisma": "^5.20.0",
         "supertest": "^7.0.0",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.9.2",

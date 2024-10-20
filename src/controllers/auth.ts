@@ -8,7 +8,8 @@ import { logger } from '@utils/logging'
 
 const accessTokenSecret: string = env.EMPSTAT_SERVER_ACCESS_TOKEN_SECRET || ''
 const refreshTokenSecret: string = env.EMPSTAT_SERVER_REFRESH_TOKEN_SECRET || ''
-const accessTokenExpireTime: string = env.EMPSTAT_SERVER_ACCESS_TOKEN_EXPIRE_TIME || ''
+const accessTokenExpireTime: string =
+    env.EMPSTAT_SERVER_ACCESS_TOKEN_EXPIRE_TIME || ''
 
 assert(accessTokenSecret, 'EMPSTAT_ACCESS_TOKEN_SECRET env variable not set')
 assert(refreshTokenSecret, 'EMPSTAT_REFRESH_TOKEN_SECRET env variable not set')
@@ -58,7 +59,9 @@ export function validateAccessToken(
             error,
         )
 
-        return res.status(StatusCodes.UNAUTHORIZED).send('invalid token')
+        return res.status(StatusCodes.UNAUTHORIZED).send({
+            error: 'invalid token',
+        })
     }
 }
 
@@ -84,7 +87,9 @@ export function validateRefreshToken(
     } catch (error) {
         logger.error('validating refresh token failed, invalid token', error)
 
-        return res.status(StatusCodes.UNAUTHORIZED).send('invalid token')
+        return res.status(StatusCodes.UNAUTHORIZED).send({
+            error: 'invalid token',
+        })
     }
 }
 

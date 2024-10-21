@@ -128,6 +128,18 @@ export async function getSubjects(req: schema.GetSubjectsRequest, res: Response)
     // this might me a big from zod side
     const from = parseInt(req.query.from) || undefined
     const count = parseInt(req.query.count) || undefined
+    const countOnly = req.query.countOnly
+
+    if (countOnly) {
+        logger.info('user is requesting count only')
+
+        const count = await prisma.subject.count()
+
+        logger.info('get subjects request completed')
+        return res.status(StatusCodes.OK).send({
+            count: count
+        })
+    }
 
     const subjects = await prisma.subject.findMany({
         skip: from,

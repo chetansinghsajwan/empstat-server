@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
@@ -122,10 +122,35 @@ export async function getTraining(req: schema.GetTrainingRequest, res: Response)
 }
 
 export async function getTrainings(req: schema.GetTrainingsRequest, res: Response) {
-    const trainings = await prisma.training.findMany()
+    logger.info(`get trainings request recieved.`)
 
-    return res.status(StatusCodes.OK).json({
-        trainings: trainings,
+    logger.info(`requesting trainings, from: ${req.query.from}, to: ${req.query.count}`)
+
+    // we need to parse this as int, because zod is returning as string
+    // this might me a big from zod side
+    const from = parseInt(req.query.from) || undefined
+    const count = parseInt(req.query.count) || undefined
+    const countOnly = req.query.countOnly
+
+    if (countOnly) {
+        logger.info('user is requesting count only')
+
+        const count = await prisma.training.count()
+
+        logger.info('get trainings request completed')
+        return res.status(StatusCodes.OK).send({
+            count: count
+        })
+    }
+
+    const trainings = await prisma.training.findMany({
+        skip: from,
+        take: count,
+    })
+
+    logger.info('get trainings request completed')
+    return res.status(StatusCodes.OK).send({
+        trainings,
     })
 }
 

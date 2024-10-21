@@ -54,7 +54,13 @@ const getTraining = {
     }),
 }
 
-const getTrainings = {}
+const getTrainings = {
+    query: zod.object({
+        from: zod.coerce.number().min(0, 'from cannot be less than 0').optional(),
+        count: zod.coerce.number().min(0, 'count cannot be less than 0').optional(),
+        countOnly: zod.coerce.boolean().optional(),
+    }),
+}
 
 const validateCreateTrainingRequest = zodExpress.validateRequest(createTraining)
 const validateDeleteTrainingRequest = zodExpress.validateRequest(deleteTraining)

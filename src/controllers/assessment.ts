@@ -42,7 +42,7 @@ export async function createAssessment(req: schema.CreateAssessmentRequest, res:
 
     logger.info('create assessment request completed.')
 
-    return res.status(StatusCodes.CREATED).json({
+    return res.status(StatusCodes.CREATED).send({
         assessment: {
             userId: newAssessment.userId,
             trainingId: newAssessment.trainingId,
@@ -116,7 +116,7 @@ export async function updateAssessment(req: schema.UpdateAssessmentRequest, res:
 
     logger.info('update assessment request completed')
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.OK).send({
         assessment: {
             userId: updatedAssessment.userId,
             trainingId: updatedAssessment.trainingId,
@@ -147,7 +147,7 @@ export async function getAssessment(req: schema.GetAssessmentRequest, res: Respo
     }
 
     logger.info('get assessment request completed')
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.OK).send({
         assessment: assessment,
     })
 }
@@ -157,16 +157,37 @@ export async function getAssessments(req: schema.GetAssessmentsRequest, res: Res
 
     const { userId, trainingId } = req.query
 
+    // we need to parse this as int, because zod is returning as string
+    // this might me a big from zod side
+    const from = parseInt(req.query.from) || undefined
+    const count = parseInt(req.query.count) || undefined
+    const countOnly = req.query.countOnly
+
+    if (countOnly) {
+        logger.info('user is requesting count only')
+
+        const count = await prisma.assessment.count()
+
+        logger.info('get assessments request completed')
+        return res.status(StatusCodes.OK).send({
+            count: count
+        })
+    }
+
+    logger.info(`requesting assessments, from: ${req.query.from}, to: ${req.query.count}`)
+
     const assessments = await prisma.assessment.findMany({
         where: {
             ...(userId ? { userId: String(userId) } : {}),
             ...(trainingId ? { trainingId: String(trainingId) } : {}),
         },
+        skip: from,
+        take: count
     })
 
     logger.info('get assessments request completed')
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.OK).send({
         assessments: assessments,
     })
 }

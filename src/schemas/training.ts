@@ -1,5 +1,6 @@
 import zod from 'zod'
-import * as zodExpress from 'zod-express-middleware'
+import zodExpress from 'zod-express-middleware'
+import { TypedRequest } from 'zod-express-middleware'
 import subjectSchema from '@schemas/subject'
 
 const mode = zod.enum(['online', 'offline', 'onsite'])
@@ -60,6 +61,12 @@ const validateDeleteTrainingRequest = zodExpress.validateRequest(deleteTraining)
 const validateUpdateTrainingRequest = zodExpress.validateRequest(updateTraining)
 const validateGetTrainingRequest = zodExpress.validateRequest(getTraining)
 const validateGetTrainingsRequest = zodExpress.validateRequest(getTrainings)
+
+export type CreateTrainingRequest = TypedRequest<any, any, typeof createTraining.body>
+export type DeleteTrainingRequest = TypedRequest<typeof deleteTraining.params, any, any>
+export type UpdateTrainingRequest = TypedRequest<typeof updateTraining.params, any, typeof updateTraining.body>
+export type GetTrainingRequest = TypedRequest<typeof getTraining.params, any, any>
+export type GetTrainingsRequest = TypedRequest<any, any, any>
 
 export default {
     id,

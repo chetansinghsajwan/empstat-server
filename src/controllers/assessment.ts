@@ -2,8 +2,9 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
+import * as schema from '@schemas/assessment'
 
-export async function createAssessment(req: Request, res: Response) {
+export async function createAssessment(req: schema.CreateAssessmentRequest, res: Response) {
     logger.info('create assessment request recieved')
 
     const { userId, trainingId, marks, internetAllowed } = req.body
@@ -49,7 +50,7 @@ export async function createAssessment(req: Request, res: Response) {
     })
 }
 
-export async function deleteAssessment(req: Request, res: Response) {
+export async function deleteAssessment(req: schema.DeleteAssessmentRequest, res: Response) {
     logger.info('delete assessment request recieved')
 
     const { userId, trainingId } = req.params
@@ -77,7 +78,7 @@ export async function deleteAssessment(req: Request, res: Response) {
     return res.status(StatusCodes.OK).send()
 }
 
-export async function updateAssessment(req: Request, res: Response) {
+export async function updateAssessment(req: schema.UpdateAssessmentRequest, res: Response) {
     logger.info('update assessment request recieved')
 
     const { userId, trainingId } = req.params
@@ -123,7 +124,7 @@ export async function updateAssessment(req: Request, res: Response) {
     })
 }
 
-export async function getAssessment(req: Request, res: Response) {
+export async function getAssessment(req: schema.GetAssessmentRequest, res: Response) {
     logger.info('get assessment request received')
 
     const { userId, trainingId } = req.params
@@ -151,7 +152,7 @@ export async function getAssessment(req: Request, res: Response) {
     })
 }
 
-export async function getAssessments(req: Request, res: Response) {
+export async function getAssessments(req: schema.GetAssessmentsRequest, res: Response) {
     logger.info('get assessments request received')
 
     const { userId, trainingId } = req.query

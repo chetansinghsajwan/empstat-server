@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { env } from 'process'
 import bcrypt from 'bcrypt'
@@ -7,6 +7,7 @@ import prisma from '@modals'
 import assert from 'assert'
 import authController from '@controllers/auth'
 import { Prisma } from '@prisma/client'
+import * as schema from '@schemas/user'
 
 const passwordHashSaltRoundsString = env.EMPSTAT_SERVER_PASSWORD_HASH_SALT_ROUNDS
 assert(
@@ -16,7 +17,7 @@ assert(
 
 const passwordHashSaltRounds = parseInt(passwordHashSaltRoundsString)
 
-export async function createUser(req: Request, res: Response) {
+export async function createUser(req: schema.CreateUserRequest, res: Response) {
     logger.info('create user request recieved')
 
     const existingUser = await prisma.user.findUnique({
@@ -81,7 +82,7 @@ export async function createUser(req: Request, res: Response) {
     return authController.createTokens(req, res, newUser.id)
 }
 
-export async function deleteUser(req: Request, res: Response) {
+export async function deleteUser(req: schema.DeleteUserRequest, res: Response) {
     logger.info(`delete user request recieved`)
 
     const userId = res.locals.user
@@ -104,7 +105,7 @@ export async function deleteUser(req: Request, res: Response) {
     })
 }
 
-export async function loginUser(req: Request, res: Response) {
+export async function loginUser(req: schema.LoginUserRequest, res: Response) {
     logger.info('login user request recieved')
 
     const userId = req.body.id
@@ -148,7 +149,7 @@ export async function loginUser(req: Request, res: Response) {
     return authController.createTokens(req, res, user.id)
 }
 
-export async function getUser(req: Request, res: Response) {
+export async function getUser(req: schema.GetUserRequest, res: Response) {
     const userId = res.locals.user
     assert(userId)
 
@@ -173,7 +174,7 @@ export async function getUser(req: Request, res: Response) {
     })
 }
 
-export async function getUsers(req: Request, res: Response) {
+export async function getUsers(req: schema.GetUsersRequest, res: Response) {
     logger.info('get users request recieved')
 
     const userId = res.locals.user

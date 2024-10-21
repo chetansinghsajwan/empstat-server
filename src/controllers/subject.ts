@@ -1,10 +1,10 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
 import * as schema from '@schemas/subject'
 
-export async function createSubject(req: Request, res: Response) {
+export async function createSubject(req: schema.CreateSubjectRequest, res: Response) {
     logger.info('create subject request received')
 
     const { id, name, minMarks, maxMarks, totalTime } = req.body
@@ -38,7 +38,7 @@ export async function createSubject(req: Request, res: Response) {
     })
 }
 
-export async function deleteSubject(req: Request, res: Response) {
+export async function deleteSubject(req: schema.DeleteSubjectRequest, res: Response) {
     logger.info('delete subject request received')
 
     const { id } = req.params
@@ -64,7 +64,7 @@ export async function deleteSubject(req: Request, res: Response) {
     })
 }
 
-export async function updateSubject(req: Request, res: Response) {
+export async function updateSubject(req: schema.UpdateSubjectRequest, res: Response) {
     logger.info('update subject request received')
 
     const { id } = req.params
@@ -97,7 +97,7 @@ export async function updateSubject(req: Request, res: Response) {
     })
 }
 
-export async function getSubject(req: Request, res: Response) {
+export async function getSubject(req: schema.GetSubjectRequest, res: Response) {
     logger.info('get subject request received')
 
     const { id } = req.params

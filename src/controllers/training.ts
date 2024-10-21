@@ -2,8 +2,9 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
+import * as schema from '@schemas/training'
 
-export async function createTraining(req: Request, res: Response) {
+export async function createTraining(req: schema.CreateTrainingRequest, res: Response) {
     logger.info('create training request recieved.')
 
     const { id, name, mode, subject, startedAt, endedAt } = req.body
@@ -35,7 +36,7 @@ export async function createTraining(req: Request, res: Response) {
     return res.status(StatusCodes.CREATED).json(newTraining)
 }
 
-export async function deleteTraining(req: Request, res: Response) {
+export async function deleteTraining(req: schema.DeleteTrainingRequest, res: Response) {
     logger.info(`delete training request received.`)
 
     const { id } = req.params
@@ -60,7 +61,7 @@ export async function deleteTraining(req: Request, res: Response) {
     })
 }
 
-export async function updateTraining(req: Request, res: Response) {
+export async function updateTraining(req: schema.UpdateTrainingRequest, res: Response) {
     logger.info(`update training request received.`)
 
     const { id } = req.params
@@ -98,7 +99,7 @@ export async function updateTraining(req: Request, res: Response) {
     })
 }
 
-export async function getTraining(req: Request, res: Response) {
+export async function getTraining(req: schema.GetTrainingRequest, res: Response) {
     logger.info(`get training request received.`)
 
     const { id } = req.params
@@ -120,7 +121,7 @@ export async function getTraining(req: Request, res: Response) {
     return res.status(StatusCodes.OK).json(training)
 }
 
-export async function getTrainings(req: Request, res: Response) {
+export async function getTrainings(req: schema.GetTrainingsRequest, res: Response) {
     const trainings = await prisma.training.findMany()
 
     return res.status(StatusCodes.OK).json({

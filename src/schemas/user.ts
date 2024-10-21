@@ -1,5 +1,6 @@
 import zod from 'zod'
-import * as zodExpress from 'zod-express-middleware'
+import zodExpress from 'zod-express-middleware'
+import { TypedRequest } from 'zod-express-middleware'
 
 const passwordRegex = new RegExp(
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
@@ -58,6 +59,12 @@ const validateDeleteUserRequest = zodExpress.validateRequest(deleteUser)
 const validateLoginUserRequest = zodExpress.validateRequest(loginUser)
 const validateGetUserRequest = zodExpress.validateRequest(getUser)
 const validateGetUsersRequest = zodExpress.validateRequest(getUsers)
+
+export type CreateUserRequest = TypedRequest<any, any, typeof createUser.body>
+export type DeleteUserRequest = TypedRequest<any, any, any>
+export type LoginUserRequest = TypedRequest<any, any, typeof loginUser.body>
+export type GetUserRequest = TypedRequest<any, any, any>
+export type GetUsersRequest = TypedRequest<any, any, any>
 
 export default {
     id,

@@ -1,5 +1,6 @@
 import zod from 'zod'
-import * as zodExpress from 'zod-express-middleware'
+import zodExpress from 'zod-express-middleware'
+import { TypedRequest } from 'zod-express-middleware'
 import userSchema from '@schemas/user'
 import trainingSchema from '@schemas/training'
 
@@ -59,6 +60,12 @@ const validateUpdateAssessmentRequest =
     zodExpress.validateRequest(updateAssessment)
 const validateGetAssessmentRequest = zodExpress.validateRequest(getAssessment)
 const validateGetAssessmentsRequest = zodExpress.validateRequest(getAssessments)
+
+export type CreateAssessmentRequest = TypedRequest<any, any, typeof createAssessment.body>
+export type DeleteAssessmentRequest = TypedRequest<typeof deleteAssessment.params, any, any>
+export type UpdateAssessmentRequest = TypedRequest<typeof updateAssessment.params, any, typeof updateAssessment.body>
+export type GetAssessmentRequest = TypedRequest<typeof getAssessment.params, any, any>
+export type GetAssessmentsRequest = TypedRequest<any, typeof getAssessments.query, any>
 
 export default {
     createAssessment,

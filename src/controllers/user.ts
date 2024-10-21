@@ -192,11 +192,33 @@ export async function getUsers(req: schema.GetUsersRequest, res: Response) {
         })
     }
 
-    const users = await prisma.user.findMany()
+    logger.info(`requesting users, from: ${req.query.from}, to: ${req.query.count}`)
+
+    // we need to parse this as int, because zod is returning as string
+    // this might me a big from zod side
+    const from = parseInt(req.query.from) || undefined
+    const count = parseInt(req.query.count) || undefined
+    const countOnly = req.query.countOnly
+
+    if (countOnly) {
+        logger.info('user is requesting count only')
+
+        const count = await prisma.user.count()
+
+        logger.info('get users request completed')
+        return res.status(StatusCodes.OK).send({
+            count: count
+        })
+    }
+
+    const users = await prisma.user.findMany({
+        skip: from,
+        take: count,
+    })
 
     logger.info('get users request completed')
     return res.status(StatusCodes.OK).send({
-        users: users,
+        users,
     })
 }
 

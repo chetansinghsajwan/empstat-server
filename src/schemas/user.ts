@@ -52,7 +52,13 @@ const loginUser = {
 
 const getUser = {}
 
-const getUsers = {}
+const getUsers = {
+    query: zod.object({
+        from: zod.coerce.number().min(0, 'from cannot be less than 0').optional(),
+        count: zod.coerce.number().min(0, 'count cannot be less than 0').optional(),
+        countOnly: zod.coerce.boolean().optional(),
+    }),
+}
 
 const validateCreateUserRequest = zodExpress.validateRequest(createUser)
 const validateDeleteUserRequest = zodExpress.validateRequest(deleteUser)
@@ -64,7 +70,7 @@ export type CreateUserRequest = TypedRequest<any, any, typeof createUser.body>
 export type DeleteUserRequest = TypedRequest<any, any, any>
 export type LoginUserRequest = TypedRequest<any, any, typeof loginUser.body>
 export type GetUserRequest = TypedRequest<any, any, any>
-export type GetUsersRequest = TypedRequest<any, any, any>
+export type GetUsersRequest = TypedRequest<any, typeof getUsers.query, any>
 
 export default {
     id,

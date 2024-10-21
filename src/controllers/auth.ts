@@ -51,7 +51,7 @@ export function validateAccessToken(
     try {
         logger.info('validating access token')
 
-        const token = req.cookies.accessToken
+        const token = req.cookies['access-token']
         const tokenData = jwt.verify(token, accessTokenSecret) as jwt.JwtPayload
 
         logger.info('validating access token successfull')
@@ -79,7 +79,7 @@ export function validateRefreshToken(
     try {
         logger.info('validating refresh token')
 
-        const token = req.cookies.refreshToken
+        const token = req.cookies['refresh-token']
         const tokenData = jwt.verify(
             token,
             refreshTokenSecret,

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
+import * as schema from '@schemas/subject'
 
 export async function createSubject(req: Request, res: Response) {
     logger.info('create subject request received')
@@ -118,10 +119,20 @@ export async function getSubject(req: Request, res: Response) {
     })
 }
 
-export async function getSubjects(req: Request, res: Response) {
+export async function getSubjects(req: schema.GetSubjectsRequest, res: Response) {
     logger.info('get subjects request received')
 
-    const subjects = await prisma.subject.findMany()
+    logger.info(`requesting subjects, from: ${req.query.from}, to: ${req.query.count}`)
+
+    // we need to parse this as int, because zod is returning as string
+    // this might me a big from zod side
+    const from = parseInt(req.query.from) || undefined
+    const count = parseInt(req.query.count) || undefined
+
+    const subjects = await prisma.subject.findMany({
+        skip: from,
+        take: count,
+    })
 
     logger.info('get subjects request completed')
     return res.status(StatusCodes.OK).send({

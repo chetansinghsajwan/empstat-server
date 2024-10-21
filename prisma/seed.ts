@@ -12,6 +12,29 @@ const options = {
 }
 
 async function main() {
+
+    await prisma.user.create({
+        data: {
+            id: 'chetansinghsajwan',
+            email: 'chetansinghsajwan@gmail.com',
+            firstName: 'chetan',
+            middleName: 'singh',
+            lastName: 'sajwan',
+            role: 'admin'
+        }
+    })
+
+    await prisma.secret.create({
+        data: {
+            user: {
+                connect: {
+                    id: 'chetansinghsajwan'
+                }
+            },
+            password: '$2a$10$gE3Dx1.W..4SKzmvZSlpAOZL.jSVQTizKAhL2xVrNrmSDWu/OA8ju'
+        }
+    })
+
     // generate users
     const users = []
     for (let i = 0; i < options.user_count; i++) {

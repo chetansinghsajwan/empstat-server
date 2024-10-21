@@ -1,5 +1,6 @@
 import zod from 'zod'
-import * as zodExpress from 'zod-express-middleware'
+import zodExpress from 'zod-express-middleware'
+import { TypedRequest } from 'zod-express-middleware'
 
 const body = {
     // subject id
@@ -36,7 +37,6 @@ export const updateSubject = {
         // subject id
         id: body.id,
     }),
-
     body: zod.object(body),
 }
 
@@ -47,7 +47,12 @@ export const getSubject = {
     }),
 }
 
-export const getSubjects = {}
+export const getSubjects = {
+    query: zod.object({
+        from: zod.coerce.number().min(0, 'from cannot be less than 0').optional(),
+        count: zod.coerce.number().min(0, 'count cannot be less than 0').optional(),
+    }),
+}
 
 export const validateCreateSubjectRequest =
     zodExpress.validateRequest(createSubject)
@@ -58,6 +63,13 @@ export const validateUpdateSubjectRequest =
 export const validateGetSubjectRequest = zodExpress.validateRequest(getSubject)
 export const validateGetSubjectsRequest =
     zodExpress.validateRequest(getSubjects)
+
+
+export type CreateSubjectRequest = TypedRequest<any, any, typeof createSubject.body>
+export type DeleteSubjectRequest = TypedRequest<typeof deleteSubject.params, any, any>
+export type UpdateSubjectRequest = TypedRequest<typeof updateSubject.params, any, typeof updateSubject.body>
+export type GetSubjectRequest = TypedRequest<typeof getSubject.params, any, any>
+export type GetSubjectsRequest = TypedRequest<any, typeof getSubjects.query, any>
 
 export default {
     body,

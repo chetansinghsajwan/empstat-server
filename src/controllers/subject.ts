@@ -55,7 +55,7 @@ export async function deleteSubject(
 
     logger.info(`delete subject request completed, count: ${subjects.count}`)
     return res.status(StatusCodes.OK).send({
-        message: 'subject deleted successfully',
+        count: subjects.count,
     })
 }
 

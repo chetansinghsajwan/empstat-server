@@ -4,7 +4,10 @@ import { logger } from '@utils/logging'
 import prisma from '@modals'
 import * as schema from '@schemas/training'
 
-export async function createTraining(req: schema.CreateTrainingRequest, res: Response) {
+export async function createTraining(
+    req: schema.CreateTrainingRequest,
+    res: Response,
+) {
     logger.info('create training request recieved.')
 
     const { id, name, mode, subject, startedAt, endedAt } = req.body
@@ -36,32 +39,27 @@ export async function createTraining(req: schema.CreateTrainingRequest, res: Res
     return res.status(StatusCodes.CREATED).json(newTraining)
 }
 
-export async function deleteTraining(req: schema.DeleteTrainingRequest, res: Response) {
+export async function deleteTraining(
+    req: schema.DeleteTrainingRequest,
+    res: Response,
+) {
     logger.info(`delete training request received.`)
 
-    const { id } = req.params
-
-    const training = await prisma.training.delete({
-        where: { id },
+    const ids = req.body.ids
+    const trainings = await prisma.training.deleteMany({
+        where: { id: { in: ids } },
     })
-
-    if (!training) {
-        logger.info(
-            'delete trainin request rejected, training does not exsist.',
-        )
-
-        return res.status(StatusCodes.BAD_REQUEST).send({
-            error: 'training does not exist',
-        })
-    }
 
     logger.info(`delete training request completed.`)
     return res.status(StatusCodes.OK).send({
-        training: training.id,
+        count: trainings.count,
     })
 }
 
-export async function updateTraining(req: schema.UpdateTrainingRequest, res: Response) {
+export async function updateTraining(
+    req: schema.UpdateTrainingRequest,
+    res: Response,
+) {
     logger.info(`update training request received.`)
 
     const { id } = req.params
@@ -99,7 +97,10 @@ export async function updateTraining(req: schema.UpdateTrainingRequest, res: Res
     })
 }
 
-export async function getTraining(req: schema.GetTrainingRequest, res: Response) {
+export async function getTraining(
+    req: schema.GetTrainingRequest,
+    res: Response,
+) {
     logger.info(`get training request received.`)
 
     const { id } = req.params
@@ -121,10 +122,15 @@ export async function getTraining(req: schema.GetTrainingRequest, res: Response)
     return res.status(StatusCodes.OK).json(training)
 }
 
-export async function getTrainings(req: schema.GetTrainingsRequest, res: Response) {
+export async function getTrainings(
+    req: schema.GetTrainingsRequest,
+    res: Response,
+) {
     logger.info(`get trainings request recieved.`)
 
-    logger.info(`requesting trainings, from: ${req.query.from}, to: ${req.query.count}`)
+    logger.info(
+        `requesting trainings, from: ${req.query.from}, to: ${req.query.count}`,
+    )
 
     // we need to parse this as int, because zod is returning as string
     // this might me a big from zod side
@@ -139,7 +145,7 @@ export async function getTrainings(req: schema.GetTrainingsRequest, res: Respons
 
         logger.info('get trainings request completed')
         return res.status(StatusCodes.OK).send({
-            count: count
+            count: count,
         })
     }
 

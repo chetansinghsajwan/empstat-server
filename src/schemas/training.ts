@@ -32,9 +32,9 @@ const createTraining = {
 }
 
 const deleteTraining = {
-    params: zod.object({
-        // training id
-        id: body.id,
+    body: zod.object({
+        // list of trainings to delete
+        ids: zod.array(body.id).min(1, 'provide at least 1 training to delete'),
     }),
 }
 
@@ -69,7 +69,7 @@ const validateGetTrainingRequest = zodExpress.validateRequest(getTraining)
 const validateGetTrainingsRequest = zodExpress.validateRequest(getTrainings)
 
 export type CreateTrainingRequest = TypedRequest<any, any, typeof createTraining.body>
-export type DeleteTrainingRequest = TypedRequest<typeof deleteTraining.params, any, any>
+export type DeleteTrainingRequest = TypedRequest<any, any, typeof deleteTraining.body>
 export type UpdateTrainingRequest = TypedRequest<typeof updateTraining.params, any, typeof updateTraining.body>
 export type GetTrainingRequest = TypedRequest<typeof getTraining.params, any, any>
 export type GetTrainingsRequest = TypedRequest<any, any, any>

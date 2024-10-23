@@ -31,6 +31,7 @@ async function main() {
                     id: 'chetansinghsajwan'
                 }
             },
+            // password: empstatchetan
             password: '$2a$10$gE3Dx1.W..4SKzmvZSlpAOZL.jSVQTizKAhL2xVrNrmSDWu/OA8ju'
         }
     })

@@ -26,11 +26,11 @@ export async function createUser(req: schema.CreateUserRequest, res: Response) {
 
     if (existingUser) {
         logger.info(
-            'create user request rejected, user with this id address already exists',
+            'create user request rejected, user with this id already exists',
         )
 
         return res.status(StatusCodes.CONFLICT).send({
-            error: 'user with this id address already exists',
+            error: 'user with this id already exists',
         })
     }
 

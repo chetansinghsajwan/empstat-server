@@ -40,7 +40,11 @@ const createUser = {
     body: zod.object(body),
 }
 
-const deleteUser = {}
+const deleteUser = {
+    body: zod.object({
+        ids: zod.array(id).min(1, 'provide at least one user to delete')
+    })
+}
 
 const loginUser = {
     body: zod.object({
@@ -67,7 +71,7 @@ const validateGetUserRequest = zodExpress.validateRequest(getUser)
 const validateGetUsersRequest = zodExpress.validateRequest(getUsers)
 
 export type CreateUserRequest = TypedRequest<any, any, typeof createUser.body>
-export type DeleteUserRequest = TypedRequest<any, any, any>
+export type DeleteUserRequest = TypedRequest<any, any, typeof deleteUser.body>
 export type LoginUserRequest = TypedRequest<any, any, typeof loginUser.body>
 export type GetUserRequest = TypedRequest<any, any, any>
 export type GetUsersRequest = TypedRequest<any, typeof getUsers.query, any>

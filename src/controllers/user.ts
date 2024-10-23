@@ -85,23 +85,20 @@ export async function createUser(req: schema.CreateUserRequest, res: Response) {
 export async function deleteUser(req: schema.DeleteUserRequest, res: Response) {
     logger.info(`delete user request recieved`)
 
-    const userId = res.locals.user
-    assert(userId)
+    const ids = req.body.ids
 
-    const user = await prisma.user.delete({ where: { id: userId } })
+    const users = await prisma.user.deleteMany({
+        where: {
+            id: { in: ids }
+        }
+    })
 
-    if (!user) {
-        logger.info('delete user request rejected, user not found')
+    const deleteCount = users.count
 
-        return res.status(StatusCodes.NOT_FOUND).send({
-            error: 'user not found',
-        })
-    }
-
-    logger.info(`delete user request completed`)
+    logger.info(`delete user request completed, count: ${deleteCount}`)
 
     return res.status(StatusCodes.OK).send({
-        error: 'user deleted',
+        count: deleteCount,
     })
 }
 

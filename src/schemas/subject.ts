@@ -26,9 +26,9 @@ export const createSubject = {
 }
 
 export const deleteSubject = {
-    params: zod.object({
-        // subject id
-        id: body.id,
+    body: zod.object({
+        // subjects to delete
+        ids: zod.array(body.id).min(1, 'provide at least 1 subject to delete'),
     }),
 }
 
@@ -49,8 +49,14 @@ export const getSubject = {
 
 export const getSubjects = {
     query: zod.object({
-        from: zod.coerce.number().min(0, 'from cannot be less than 0').optional(),
-        count: zod.coerce.number().min(0, 'count cannot be less than 0').optional(),
+        from: zod.coerce
+            .number()
+            .min(0, 'from cannot be less than 0')
+            .optional(),
+        count: zod.coerce
+            .number()
+            .min(0, 'count cannot be less than 0')
+            .optional(),
         countOnly: zod.coerce.boolean().optional(),
     }),
 }
@@ -65,12 +71,27 @@ export const validateGetSubjectRequest = zodExpress.validateRequest(getSubject)
 export const validateGetSubjectsRequest =
     zodExpress.validateRequest(getSubjects)
 
-
-export type CreateSubjectRequest = TypedRequest<any, any, typeof createSubject.body>
-export type DeleteSubjectRequest = TypedRequest<typeof deleteSubject.params, any, any>
-export type UpdateSubjectRequest = TypedRequest<typeof updateSubject.params, any, typeof updateSubject.body>
+export type CreateSubjectRequest = TypedRequest<
+    any,
+    any,
+    typeof createSubject.body
+>
+export type DeleteSubjectRequest = TypedRequest<
+    any,
+    any,
+    typeof deleteSubject.body
+>
+export type UpdateSubjectRequest = TypedRequest<
+    typeof updateSubject.params,
+    any,
+    typeof updateSubject.body
+>
 export type GetSubjectRequest = TypedRequest<typeof getSubject.params, any, any>
-export type GetSubjectsRequest = TypedRequest<any, typeof getSubjects.query, any>
+export type GetSubjectsRequest = TypedRequest<
+    any,
+    typeof getSubjects.query,
+    any
+>
 
 export default {
     body,

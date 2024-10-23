@@ -4,7 +4,10 @@ import { logger } from '@utils/logging'
 import prisma from '@modals'
 import * as schema from '@schemas/subject'
 
-export async function createSubject(req: schema.CreateSubjectRequest, res: Response) {
+export async function createSubject(
+    req: schema.CreateSubjectRequest,
+    res: Response,
+) {
     logger.info('create subject request received')
 
     const { id, name, minMarks, maxMarks, totalTime } = req.body
@@ -38,33 +41,28 @@ export async function createSubject(req: schema.CreateSubjectRequest, res: Respo
     })
 }
 
-export async function deleteSubject(req: schema.DeleteSubjectRequest, res: Response) {
+export async function deleteSubject(
+    req: schema.DeleteSubjectRequest,
+    res: Response,
+) {
     logger.info('delete subject request received')
 
-    const { id } = req.params
+    const ids = req.body.ids
 
-    const subject = await prisma.subject.findUnique({
-        where: { id },
+    const subjects = await prisma.subject.deleteMany({
+        where: { id: { in: ids } },
     })
 
-    if (!subject) {
-        logger.info('delete subject request rejected, subject not found')
-        return res.status(StatusCodes.NOT_FOUND).send({
-            error: 'subject not found',
-        })
-    }
-
-    await prisma.subject.delete({
-        where: { id },
-    })
-
-    logger.info('delete subject request completed')
+    logger.info(`delete subject request completed, count: ${subjects.count}`)
     return res.status(StatusCodes.OK).send({
         message: 'subject deleted successfully',
     })
 }
 
-export async function updateSubject(req: schema.UpdateSubjectRequest, res: Response) {
+export async function updateSubject(
+    req: schema.UpdateSubjectRequest,
+    res: Response,
+) {
     logger.info('update subject request received')
 
     const { id } = req.params
@@ -119,10 +117,15 @@ export async function getSubject(req: schema.GetSubjectRequest, res: Response) {
     })
 }
 
-export async function getSubjects(req: schema.GetSubjectsRequest, res: Response) {
+export async function getSubjects(
+    req: schema.GetSubjectsRequest,
+    res: Response,
+) {
     logger.info('get subjects request received')
 
-    logger.info(`requesting subjects, from: ${req.query.from}, to: ${req.query.count}`)
+    logger.info(
+        `requesting subjects, from: ${req.query.from}, to: ${req.query.count}`,
+    )
 
     // we need to parse this as int, because zod is returning as string
     // this might me a big from zod side
@@ -137,7 +140,7 @@ export async function getSubjects(req: schema.GetSubjectsRequest, res: Response)
 
         logger.info('get subjects request completed')
         return res.status(StatusCodes.OK).send({
-            count: count
+            count: count,
         })
     }
 

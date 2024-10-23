@@ -4,6 +4,11 @@ import { TypedRequest } from 'zod-express-middleware'
 import userSchema from '@schemas/user'
 import trainingSchema from '@schemas/training'
 
+const id = zod.object({
+    userId: userSchema.id,
+    trainingId: trainingSchema.id,
+})
+
 const body = {
     // user id
     userId: userSchema.id,
@@ -23,9 +28,8 @@ const createAssessment = {
 }
 
 const deleteAssessment = {
-    params: zod.object({
-        userId: body.userId,
-        trainingId: body.trainingId,
+    body: zod.object({
+        ids: zod.array(id).min(1, 'provide at least one assessment to delete'),
     }),
 }
 
@@ -49,8 +53,14 @@ const getAssessments = {
     query: zod.object({
         userId: body.userId.optional(),
         trainingId: body.trainingId.optional(),
-        from: zod.coerce.number().min(0, 'from cannot be less than 0').optional(),
-        count: zod.coerce.number().min(0, 'count cannot be less than 0').optional(),
+        from: zod.coerce
+            .number()
+            .min(0, 'from cannot be less than 0')
+            .optional(),
+        count: zod.coerce
+            .number()
+            .min(0, 'count cannot be less than 0')
+            .optional(),
         countOnly: zod.coerce.boolean().optional(),
     }),
 }
@@ -64,11 +74,31 @@ const validateUpdateAssessmentRequest =
 const validateGetAssessmentRequest = zodExpress.validateRequest(getAssessment)
 const validateGetAssessmentsRequest = zodExpress.validateRequest(getAssessments)
 
-export type CreateAssessmentRequest = TypedRequest<any, any, typeof createAssessment.body>
-export type DeleteAssessmentRequest = TypedRequest<typeof deleteAssessment.params, any, any>
-export type UpdateAssessmentRequest = TypedRequest<typeof updateAssessment.params, any, typeof updateAssessment.body>
-export type GetAssessmentRequest = TypedRequest<typeof getAssessment.params, any, any>
-export type GetAssessmentsRequest = TypedRequest<any, typeof getAssessments.query, any>
+export type CreateAssessmentRequest = TypedRequest<
+    any,
+    any,
+    typeof createAssessment.body
+>
+export type DeleteAssessmentRequest = TypedRequest<
+    any,
+    any,
+    typeof deleteAssessment.body
+>
+export type UpdateAssessmentRequest = TypedRequest<
+    typeof updateAssessment.params,
+    any,
+    typeof updateAssessment.body
+>
+export type GetAssessmentRequest = TypedRequest<
+    typeof getAssessment.params,
+    any,
+    any
+>
+export type GetAssessmentsRequest = TypedRequest<
+    any,
+    typeof getAssessments.query,
+    any
+>
 
 export default {
     createAssessment,

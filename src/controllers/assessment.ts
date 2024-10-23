@@ -1,10 +1,13 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@utils/logging'
 import prisma from '@modals'
 import * as schema from '@schemas/assessment'
 
-export async function createAssessment(req: schema.CreateAssessmentRequest, res: Response) {
+export async function createAssessment(
+    req: schema.CreateAssessmentRequest,
+    res: Response,
+) {
     logger.info('create assessment request recieved')
 
     const { userId, trainingId, marks, internetAllowed } = req.body
@@ -50,35 +53,30 @@ export async function createAssessment(req: schema.CreateAssessmentRequest, res:
     })
 }
 
-export async function deleteAssessment(req: schema.DeleteAssessmentRequest, res: Response) {
+export async function deleteAssessment(
+    req: schema.DeleteAssessmentRequest,
+    res: Response,
+) {
     logger.info('delete assessment request recieved')
 
-    const { userId, trainingId } = req.params
-
-    const deletedAssessment = await prisma.assessment.delete({
+    const ids = req.body.ids
+    const assessments = await prisma.assessment.deleteMany({
         where: {
-            userId_trainingId: {
-                userId,
-                trainingId,
-            },
+            userId: { in: ids.map(id => id.userId) },
+            trainingId: { in: ids.map(id => id.trainingId) },
         },
     })
 
-    if (!deletedAssessment) {
-        logger.info(
-            'delete assessment request rejected, assessment does not exist',
-        )
-
-        return res.status(StatusCodes.BAD_REQUEST).send({
-            error: 'assessment does not exist',
-        })
-    }
-
     logger.info('delete assessment request completed')
-    return res.status(StatusCodes.OK).send()
+    return res.status(StatusCodes.OK).send({
+        count: assessments.count,
+    })
 }
 
-export async function updateAssessment(req: schema.UpdateAssessmentRequest, res: Response) {
+export async function updateAssessment(
+    req: schema.UpdateAssessmentRequest,
+    res: Response,
+) {
     logger.info('update assessment request recieved')
 
     const { userId, trainingId } = req.params
@@ -124,7 +122,10 @@ export async function updateAssessment(req: schema.UpdateAssessmentRequest, res:
     })
 }
 
-export async function getAssessment(req: schema.GetAssessmentRequest, res: Response) {
+export async function getAssessment(
+    req: schema.GetAssessmentRequest,
+    res: Response,
+) {
     logger.info('get assessment request received')
 
     const { userId, trainingId } = req.params
@@ -152,7 +153,10 @@ export async function getAssessment(req: schema.GetAssessmentRequest, res: Respo
     })
 }
 
-export async function getAssessments(req: schema.GetAssessmentsRequest, res: Response) {
+export async function getAssessments(
+    req: schema.GetAssessmentsRequest,
+    res: Response,
+) {
     logger.info('get assessments request received')
 
     const { userId, trainingId } = req.query
@@ -170,11 +174,13 @@ export async function getAssessments(req: schema.GetAssessmentsRequest, res: Res
 
         logger.info('get assessments request completed')
         return res.status(StatusCodes.OK).send({
-            count: count
+            count: count,
         })
     }
 
-    logger.info(`requesting assessments, from: ${req.query.from}, to: ${req.query.count}`)
+    logger.info(
+        `requesting assessments, from: ${req.query.from}, to: ${req.query.count}`,
+    )
 
     const assessments = await prisma.assessment.findMany({
         where: {
@@ -182,7 +188,7 @@ export async function getAssessments(req: schema.GetAssessmentsRequest, res: Res
             ...(trainingId ? { trainingId: String(trainingId) } : {}),
         },
         skip: from,
-        take: count
+        take: count,
     })
 
     logger.info('get assessments request completed')

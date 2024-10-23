@@ -13,7 +13,7 @@ router.post(
 )
 
 router.delete(
-    '/:userId/:trainingId',
+    '',
     authController.validateAccessToken,
     schema.validateDeleteAssessmentRequest,
     controller.deleteAssessment,
